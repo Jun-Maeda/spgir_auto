@@ -346,7 +346,6 @@ class Spgirl_Auto:
 
         driver.close()
 
-
         logs = f"logs/{self.username}/log.txt"
         with open(logs, mode="w") as f:
             for d in my_log:
