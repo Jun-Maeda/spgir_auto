@@ -33,7 +33,7 @@ MANIFEST
 *.manifest
 *.spec
 
-# Installer logs
+# Installer logs2
 pip-log.txt
 pip-delete-this-directory.txt
 
@@ -105,5 +105,5 @@ venv.bak/
 .mypy_cache/
 
 account.txt
-logs/
+old/
 urls/
