@@ -16,6 +16,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 import re
+import sys
 
 
 class Spgirl_Auto:
@@ -51,16 +52,18 @@ class Spgirl_Auto:
             driver.find_element(By.CLASS_NAME, value='no_kitene_count')
             print("使い切りました")
         except:
+            WebDriverWait(driver, 80).until(
+                EC.visibility_of_element_located((By.CLASS_NAME, "kitene_count")))
             c_text = driver.find_element(By.CLASS_NAME, value='kitene_count').text
-            many = re.findall(r'キテネ残り回数：(\w+)回', c_text)
+            many = re.findall(r'キテネ残り回数：(\w+)回', c_text)[0]
             print(many)
             try:
                 driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
                 WebDriverWait(driver, 80).until(
                     EC.visibility_of_element_located((By.CLASS_NAME, "kitene_btn")))
                 btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
-                for btn in btns:
-                    btn.click()
+                for i in range(int(many)):
+                    btns[i].click()
                     Alert(driver).accept()
                     time.sleep(3)
                 log = f"{many}回追加で実行しました"
@@ -117,7 +120,13 @@ class Spgirl_Auto:
 
     # ファイルからURLと回数を取得してそれぞれその回数だけキテねする
     def url_read_kitene(self):
-        text_file = f"users/{self.username}.txt"
+        text_file = f"urls/{self.username}.txt"
+
+        # ファイルがなかったら強制終了
+        if not os.path.isfile(text_file):
+            print("URLファイルがありません")
+            sys.exit()
+
         follows = f"logs/{self.username}/follows.txt"
         my_log = []
 
@@ -151,15 +160,15 @@ class Spgirl_Auto:
         desired = DesiredCapabilities().CHROME
         desired['pageLoadStrategy'] = 'none'
 
-        # user_profile = 'UserProfile'
+        # user_profile = 'UserProfile2'
         # options.add_argument('--user-data-dir=' + user_profile)
         # driver = webdriver.Chrome(options=options, desired_capabilities=desired)
         driver = webdriver.Chrome(options=options)
         driver.set_window_size(1500, 1500)
-        driver.set_page_load_timeout(20)
+        # driver.set_page_load_timeout(20)
 
         driver.get(f"{targets[0][3:]}reviews/?lo=1")
-        driver.implicitly_wait(5)
+        driver.implicitly_wait(10)
         driver.execute_script("window.scrollTo(0, 0)")
         driver.find_element(By.ID, value='login_header').click()
         driver.find_element(By.ID, value='user').send_keys(self.username)
@@ -247,13 +256,12 @@ class Spgirl_Auto:
                         if not url in my_follow and cou < many:
                             driver.get(url)
                             try:
-                                try:
-                                    alert = driver.switch_to.alert
-                                    print(alert.text)
-                                    my_log.append(alert.text)
-                                    alert.accept()
-                                except:
-                                    pass
+                                # if driver.switch_to.alert:
+                                #     alert = driver.switch_to.alert
+                                #     print(alert.text)
+                                #     my_log.append(alert.text)
+                                #     alert.accept()
+
                                 # wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "kitene_send")))
 
                                 # driver.save_screenshot("スクショ.img")
@@ -376,4 +384,4 @@ if __name__ == '__main__':
     time_end = time.perf_counter()
     tim = time_end - time_sta
 
-    print(tim)
+    print(tim / 60)
