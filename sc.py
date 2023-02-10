@@ -46,32 +46,39 @@ class Spgirl_Auto:
     def kitene_limit(self):
         driver = self.login()
         time.sleep(2)
+        logs = f"logs/{self.username}/log.txt"
 
-        # キテねがつかいきってるか確認
-        try:
-            driver.find_element(By.CLASS_NAME, value='no_kitene_count')
-            print("使い切りました")
-        except:
-            WebDriverWait(driver, 80).until(
-                EC.visibility_of_element_located((By.CLASS_NAME, "kitene_count")))
-            c_text = driver.find_element(By.CLASS_NAME, value='kitene_count').text
-            many = re.findall(r'キテネ残り回数：(\w+)回', c_text)[0]
-            print(many)
-            try:
-                driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                WebDriverWait(driver, 80).until(
-                    EC.visibility_of_element_located((By.CLASS_NAME, "kitene_btn")))
-                btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
-                for i in range(int(many)):
-                    btns[i].click()
-                    Alert(driver).accept()
-                    time.sleep(3)
-                log = f"{many}回追加で実行しました"
-            except:
-                log = "失敗しました"
-            logs = f"logs/{self.username}/log.txt"
+        # 認証コードを求められた場合
+        if driver.find_element(By.CLASS_NAME, value='title-txt').text == "認証コードを入力":
+            print("認証コードが必要です")
             with open(logs, mode="a") as f:
-                f.write("%s\n" % log)
+                f.write("%s\n" % "認証コードが必要です")
+        else:
+
+            # キテねがつかいきってるか確認
+            try:
+                driver.find_element(By.CLASS_NAME, value='no_kitene_count')
+                print("使い切りました")
+            except:
+                try:
+                    WebDriverWait(driver, 60).until(
+                        EC.visibility_of_element_located((By.CLASS_NAME, "kitene_count")))
+                    c_text = driver.find_element(By.CLASS_NAME, value='kitene_count').text
+                    many = re.findall(r'キテネ残り回数：(\w+)回', c_text)[0]
+                    print(many)
+                    driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
+                    time.sleep(3)
+                    btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
+                    for i in range(int(many)):
+                        btns[i].click()
+                        Alert(driver).accept()
+                        time.sleep(3)
+                    log = f"{many}回追加で実行しました"
+                except:
+                    log = "失敗しました"
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % log)
+        driver.close()
 
     # マイページから自分のURLを取得する(エリアが変わらなければやる必要なし)
     def mypage(self):
@@ -121,6 +128,9 @@ class Spgirl_Auto:
     # ファイルからURLと回数を取得してそれぞれその回数だけキテねする
     def url_read_kitene(self):
         text_file = f"urls/{self.username}.txt"
+        # ログようディレクトリがない場合
+        if not os.path.isdir(f"logs/{self.username}"):
+            os.mkdir(f"logs/{self.username}")
 
         # ファイルがなかったら強制終了
         if not os.path.isfile(text_file):
@@ -160,7 +170,7 @@ class Spgirl_Auto:
         desired = DesiredCapabilities().CHROME
         desired['pageLoadStrategy'] = 'none'
 
-        # user_profile = 'UserProfile2'
+        # user_profile = 'UserProfile'
         # options.add_argument('--user-data-dir=' + user_profile)
         # driver = webdriver.Chrome(options=options, desired_capabilities=desired)
         driver = webdriver.Chrome(options=options)
@@ -309,7 +319,6 @@ class Spgirl_Auto:
                                 pass
                             time.sleep(1)
                             driver.back()
-                            # time.sleep(1)
 
                         # エラーが10以上だった場合
                         if error >= 10:
@@ -326,9 +335,10 @@ class Spgirl_Auto:
                         driver.forward()
                     time.sleep(3)
                     print(driver.current_url)
+                    my_log.append(driver.current_url)
                     print("次のページに進みます")
                     my_log.append("次のページに進みます")
-                    WebDriverWait(driver, 10).until(
+                    WebDriverWait(driver, 30).until(
                         EC.visibility_of_element_located((By.CLASS_NAME, "next")))
                     driver.get(driver.find_element(By.CLASS_NAME, value='next').get_attribute(name='href'))
                 except:
@@ -377,8 +387,26 @@ if __name__ == '__main__':
 
     for user in users:
         test = Spgirl_Auto(user[0], user[1])
-        test.url_read_kitene()
-        test.kitene_limit()
+
+        # 自動キテね
+        try:
+            test.url_read_kitene()
+        except Exception as e:
+            print("キテねに失敗しました")
+            print(e)
+            logs = f"logs/{user[0]}/log.txt"
+            with open(logs, mode="w") as f:
+                f.write("%s\n" % e)
+
+        # 確認
+        try:
+            test.kitene_limit()
+        except Exception as e:
+            print("キテねの確認に失敗しました")
+            print(e)
+            logs = f"logs/{user[0]}/log.txt"
+            with open(logs, mode="w") as f:
+                f.write("%s\n" % e)
 
     # 時間を測る
     time_end = time.perf_counter()
