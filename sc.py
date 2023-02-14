@@ -17,6 +17,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 import re
 import sys
+from selenium import webdriver
+
+
+
 
 
 class Spgirl_Auto:
@@ -42,23 +46,63 @@ class Spgirl_Auto:
         time.sleep(2)
         return driver
 
-    # きてねの残りを数える
+    # 残りのキテねの数のみ出力
+    def kitene_confirm(self):
+        driver = self.login()
+        time.sleep(2)
+        logs = f"all_log.txt"
+        print(self.username)
+        with open(logs, mode="a") as f:
+            f.write("%s\n" % self.username)
+
+        # 認証コードを求められた場合
+        try:
+            auth = driver.find_element(By.CLASS_NAME, value='title-txt')
+            if auth.text == "認証コードを入力":
+                print("認証コードが必要です")
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % "認証コードが必要です")
+        except:
+            # キテねがつかいきってるか確認
+            try:
+                driver.find_element(By.CLASS_NAME, value='no_kitene_count')
+                log = "使い切りました"
+            except:
+                try:
+                    WebDriverWait(driver, 60).until(
+                        EC.visibility_of_element_located((By.CLASS_NAME, "kitene_count")))
+                    c_text = driver.find_element(By.CLASS_NAME, value='kitene_count').text
+                    many = re.findall(r'キテネ残り回数：(\w+)回', c_text)[0]
+                    log = f"{many}残ってます"
+                except:
+                    log = "失敗しました"
+            with open(logs, mode="a") as f:
+                f.write("%s\n" % log)
+                print(log)
+        driver.close()
+
+
+
+    # きてねの残りを数えてキテねを実行
     def kitene_limit(self):
         driver = self.login()
         time.sleep(2)
         logs = f"logs/{self.username}/log.txt"
+        print(self.username)
 
         # 認証コードを求められた場合
-        if driver.find_element(By.CLASS_NAME, value='title-txt').text == "認証コードを入力":
-            print("認証コードが必要です")
-            with open(logs, mode="a") as f:
-                f.write("%s\n" % "認証コードが必要です")
-        else:
-
+        try:
+            auth = driver.find_element(By.CLASS_NAME, value='title-txt')
+            if auth.text == "認証コードを入力":
+                print("認証コードが必要です")
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % "認証コードが必要です")
+        except:
             # キテねがつかいきってるか確認
             try:
                 driver.find_element(By.CLASS_NAME, value='no_kitene_count')
-                print("使い切りました")
+                log = "使い切りました"
+                print(log)
             except:
                 try:
                     WebDriverWait(driver, 60).until(
@@ -67,17 +111,25 @@ class Spgirl_Auto:
                     many = re.findall(r'キテネ残り回数：(\w+)回', c_text)[0]
                     print(many)
                     driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                    time.sleep(3)
-                    btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
+                    WebDriverWait(driver, 90).until(
+                        EC.visibility_of_element_located((By.CLASS_NAME, "kitene_btn")))
+                    time.sleep(8)
+                    btns = driver.find_elements(By.CLASS_NAME, value='kitene_mada')
+
                     for i in range(int(many)):
+                        # btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
+                        driver.execute_script('arguments[0].scrollIntoView(true);', btns[i])
                         btns[i].click()
+                        time.sleep(2)
                         Alert(driver).accept()
-                        time.sleep(3)
+                        time.sleep(2)
+                        print(f'{i+1}回目キテねしました')
                     log = f"{many}回追加で実行しました"
-                except:
+                except Exception as e:
+                    print(e)
                     log = "失敗しました"
-                with open(logs, mode="a") as f:
-                    f.write("%s\n" % log)
+            with open(logs, mode="a") as f:
+                f.write("%s\n" % log)
         driver.close()
 
     # マイページから自分のURLを取得する(エリアが変わらなければやる必要なし)
@@ -179,6 +231,7 @@ class Spgirl_Auto:
 
         driver.get(f"{targets[0][3:]}reviews/?lo=1")
         driver.implicitly_wait(10)
+        # driver.set_page_load_timeout(30)
         driver.execute_script("window.scrollTo(0, 0)")
         driver.find_element(By.ID, value='login_header').click()
         driver.find_element(By.ID, value='user').send_keys(self.username)
@@ -209,6 +262,8 @@ class Spgirl_Auto:
 
             driver.get(f"{tar_url}reviews/?lo=1")
             print(tar_url)
+            # 対象の口コミ一覧
+            my_url = str(driver.current_url)
             my_log.append(tar_url)
             while cou < many:
                 try:
@@ -318,7 +373,7 @@ class Spgirl_Auto:
                             except:
                                 pass
                             time.sleep(1)
-                            driver.back()
+                            # driver.back()
 
                         # エラーが10以上だった場合
                         if error >= 10:
@@ -334,6 +389,7 @@ class Spgirl_Auto:
                     if driver.current_url == 'data:,':
                         driver.forward()
                     time.sleep(3)
+                    driver.get(my_url)
                     print(driver.current_url)
                     my_log.append(driver.current_url)
                     print("次のページに進みます")
@@ -341,13 +397,14 @@ class Spgirl_Auto:
                     WebDriverWait(driver, 30).until(
                         EC.visibility_of_element_located((By.CLASS_NAME, "next")))
                     driver.get(driver.find_element(By.CLASS_NAME, value='next').get_attribute(name='href'))
+                    my_url = str(driver.current_url)
                 except:
                     print("次のページはありません")
                     my_log.append("次のページはありません")
                     break
 
             # キテねした人をフォローリストに追加
-            with open(follows, mode="w") as f:
+            with open(follows, mode="a") as f:
                 for d in my_follow:
                     f.write("%s\n" % d)
 
@@ -374,6 +431,8 @@ if __name__ == '__main__':
     # 時間のカウント
     time_sta = time.perf_counter()
 
+    answer = input("[1]自動キテね実行 [2]残りのキテね確認 [3]マッチユーザーのみ")
+
     # ユーザー情報の取り込み
     users = []
     with open("account.txt", "r", encoding="utf-8") as f:
@@ -385,28 +444,55 @@ if __name__ == '__main__':
         l = li.split(" ")
         users.append(l)
 
-    for user in users:
-        test = Spgirl_Auto(user[0], user[1])
+    if answer == "1":
+        for user in users:
+            test = Spgirl_Auto(user[0], user[1])
 
-        # 自動キテね
-        try:
-            test.url_read_kitene()
-        except Exception as e:
-            print("キテねに失敗しました")
-            print(e)
-            logs = f"logs/{user[0]}/log.txt"
-            with open(logs, mode="w") as f:
-                f.write("%s\n" % e)
+            # 自動キテね
+            try:
+                test.url_read_kitene()
+            except Exception as e:
+                print("キテねに失敗しました")
+                print(e)
+                logs = f"logs/{user[0]}/log.txt"
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % e)
 
-        # 確認
-        try:
-            test.kitene_limit()
-        except Exception as e:
-            print("キテねの確認に失敗しました")
-            print(e)
-            logs = f"logs/{user[0]}/log.txt"
-            with open(logs, mode="w") as f:
-                f.write("%s\n" % e)
+            # 確認
+            try:
+                test.kitene_limit()
+            except Exception as e:
+                print("キテねの確認に失敗しました")
+                print(e)
+                logs = f"logs/{user[0]}/log.txt"
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % e)
+
+    elif answer == "2":
+        for user in users:
+            test = Spgirl_Auto(user[0], user[1])
+            try:
+                test.kitene_confirm()
+            except Exception as e:
+                print("キテねの確認に失敗しました")
+                print(e)
+                logs = f"all_log.txt"
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % e)
+
+    elif answer == "3":
+        for user in users:
+            test = Spgirl_Auto(user[0], user[1])
+            try:
+                test.kitene_limit()
+            except Exception as e:
+                print("キテねに失敗しました")
+                print(e)
+                logs = f"all_log.txt"
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % e)
+    else:
+        print("不正な入力です。")
 
     # 時間を測る
     time_end = time.perf_counter()
