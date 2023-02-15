@@ -1,24 +1,30 @@
-from selenium import webdriver
-from selenium.webdriver import ChromeOptions
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome import service as fs
 from selenium.webdriver.chrome.service import Service
-import chromedriver_binary
 from webdriver_manager.chrome import ChromeDriverManager
 import time
-from dotenv import load_dotenv
 import os
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 import re
 import sys
 from selenium import webdriver
+import dropbox
 
+
+def my_drop_box():
+    dropbox_access_token = os.environ['TOKEN']
+    # dropbox_path = "/heaven_auto"
+
+    drop = dropbox.Dropbox(dropbox_access_token)
+    inp = input("読み込むフォルダ名を入力してください")
+    today_path = f'/heaven_auto/{inp}/'
+    for entry in drop.files_list_folder(f'{today_path}urls').entries:
+        drop.files_download_to_file(f'urls/{entry.name}', f'{today_path}urls/{entry.name}')
+
+    drop.files_download_to_file('account.txt', f'{today_path}account.txt')
 
 
 
@@ -50,7 +56,7 @@ class Spgirl_Auto:
     def kitene_confirm(self):
         driver = self.login()
         time.sleep(2)
-        logs = f"all_log.txt"
+        logs = "all_log.txt"
         print(self.username)
         with open(logs, mode="a") as f:
             f.write("%s\n" % self.username)
@@ -80,8 +86,6 @@ class Spgirl_Auto:
                 f.write("%s\n" % log)
                 print(log)
         driver.close()
-
-
 
     # きてねの残りを数えてキテねを実行
     def kitene_limit(self):
@@ -123,7 +127,7 @@ class Spgirl_Auto:
                         time.sleep(2)
                         Alert(driver).accept()
                         time.sleep(2)
-                        print(f'{i+1}回目キテねしました')
+                        print(f'{i + 1}回目キテねしました')
                     log = f"{many}回追加で実行しました"
                 except Exception as e:
                     print(e)
@@ -431,7 +435,7 @@ if __name__ == '__main__':
     # 時間のカウント
     time_sta = time.perf_counter()
 
-    answer = input("[1]自動キテね実行 [2]残りのキテね確認 [3]マッチユーザーのみ")
+    answer = input("[1]自動キテね実行 [2]残りのキテね確認 [3]マッチユーザーのみ [4]本日のファイルダウンロード")
 
     # ユーザー情報の取り込み
     users = []
@@ -491,6 +495,8 @@ if __name__ == '__main__':
                 logs = f"all_log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
+    elif answer == "4":
+        my_drop_box()
     else:
         print("不正な入力です。")
 
