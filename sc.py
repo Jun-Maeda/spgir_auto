@@ -31,6 +31,13 @@ def my_driver():
     # 画像非表示
     options.add_argument('--blink-settings=imagesEnabled=false')
 
+    # セキュリティ対策などのchromeに搭載してある保護機能をオフにする。
+    options.add_argument('--no-sandbox')
+    # ディスクのメモリスペースを使う。
+    options.add_argument('--disable-dev-shm-usage')
+    # リモートデバッグフラグを立てる。
+    options.add_argument('--remote-debugging-port=9222')
+
     driver = webdriver.Chrome(options=options)
     driver.set_window_size(1500, 1500)
 
