@@ -18,6 +18,25 @@ import subprocess
 
 load_dotenv()
 
+def my_driver():
+    # スクレイピング
+    options = webdriver.ChromeOptions()
+
+    serv = Service(ChromeDriverManager().install())  # driverの自動更新
+
+    # ヘッドレスモード
+    options.headless = True
+    # options.add_argument('--disable-gpu')
+
+    # 画像非表示
+    options.add_argument('--blink-settings=imagesEnabled=false')
+
+    driver = webdriver.Chrome(options=options)
+    driver.set_window_size(1500, 1500)
+
+    return driver
+
+
 
 def my_drop_box():
     app_key = os.environ['KEY']
@@ -39,20 +58,15 @@ def my_drop_box():
 
 
 class Spgirl_Auto:
-    def __init__(self, username, password):
+    def __init__(self, username, password, dri):
         self.username = username
         self.password = password
+        self.driver = dri
 
     # ログインするまでの処理
     def login(self):
-        options = webdriver.ChromeOptions()
-        options.headless = True
-        # serv = Service(ChromeDriverManager().install())  # driverの自動更新
-        driver = webdriver.Chrome(options=options)
-        wait = WebDriverWait(driver=driver, timeout=20)
-        # URLにアクセス
-        url = "https://spgirl.cityheaven.net/J1Login.php?girlId=aqOK%2FRBOsM0%3D&PHPSESSID=8be4e6213cd52fc42bf5e4b6870df3b7"
-
+        url = "https://spgirl.cityheaven.net/J1Login.php"
+        driver = self.driver
         driver.get(url)
         time.sleep(2)
         driver.find_element(by=By.ID, value='userid').send_keys(self.username)
@@ -153,16 +167,12 @@ class Spgirl_Auto:
 
     # 自分のURLからエリアのお店の一覧を取得する(エリアの対象のお店のURLを取得)
     def myshops(self):
-        options = webdriver.ChromeOptions()
-        # options.headless = True
-        # serv = Service(ChromeDriverManager().install())  # driverの自動更新
-        driver = webdriver.Chrome(options=options)
-        wait = WebDriverWait(driver=driver, timeout=60)
-
         # URLにアクセス
         # url = self.mypage()
         # ToDo:個人のURLを保管する場所作る
         url = "https://www.cityheaven.net/tokyo/A1304/A130401/fullco/girlid-44275681/?mypage_flg=1"
+        driver = self.driver
+        wait = WebDriverWait(driver=driver, timeout=60)
         driver.get(url)
         driver.find_element(By.ID, value='location-breadcrumbs-wrap').find_elements(By.TAG_NAME, value="li")[4].click()
         wait.until(EC.presence_of_all_elements_located)
@@ -188,7 +198,7 @@ class Spgirl_Auto:
                     f.write(s.get_attribute(name="href"))
                     f.write("\n")
 
-        # location-breadcrumbs-wrap > li:nth-child(5) > a
+
 
     # ファイルからURLと回数を取得してそれぞれその回数だけキテねする
     def url_read_kitene(self):
@@ -219,32 +229,10 @@ class Spgirl_Auto:
             my_follow_file = f.read()
         my_follow = my_follow_file.split()
 
-        # スクレイピング
-        options = webdriver.ChromeOptions()
-
-        serv = Service(ChromeDriverManager().install())  # driverの自動更新
-
-        # ヘッドレスモード
-        options.headless = True
-        # options.add_argument('--disable-gpu')
-
-        # 画像非表示
-        options.add_argument('--blink-settings=imagesEnabled=false')
-
-        # 読み込み待ち回避
-        desired = DesiredCapabilities().CHROME
-        desired['pageLoadStrategy'] = 'none'
-
-        # user_profile = 'UserProfile'
-        # options.add_argument('--user-data-dir=' + user_profile)
-        # driver = webdriver.Chrome(options=options, desired_capabilities=desired)
-        driver = webdriver.Chrome(options=options)
-        driver.set_window_size(1500, 1500)
-        # driver.set_page_load_timeout(20)
+        driver = self.driver
 
         driver.get(f"{targets[0][3:]}reviews/?lo=1")
         driver.implicitly_wait(10)
-        # driver.set_page_load_timeout(30)
         driver.execute_script("window.scrollTo(0, 0)")
         driver.find_element(By.ID, value='login_header').click()
         driver.find_element(By.ID, value='user').send_keys(self.username)
@@ -313,11 +301,8 @@ class Spgirl_Auto:
                     my_log.append(len(ac_url))
 
                     # 取得したurlからすでに自分のフォローした人がいないか確認
-                    # for i in range(len(members)):
                     for i in ac_url:
                         url = i
-                        # url = driver.find_elements(By.CLASS_NAME, value='review-item-shopnameButton')[i].find_element(
-                        #     By.TAG_NAME, value="a").get_attribute(name="href")
                         driver.implicitly_wait(5)
                         try:
                             alert = driver.switch_to.alert
@@ -441,6 +426,7 @@ class Spgirl_Auto:
 
 
 if __name__ == '__main__':
+
     # 時間のカウント
     time_sta = time.perf_counter()
 
@@ -459,7 +445,7 @@ if __name__ == '__main__':
 
     if answer == "1":
         for user in users:
-            test = Spgirl_Auto(user[0], user[1])
+            test = Spgirl_Auto(user[0], user[1], my_driver())
 
             # 自動キテね
             try:
@@ -473,7 +459,7 @@ if __name__ == '__main__':
         time.sleep(5)
         # 確認
         for user in users:
-            test = Spgirl_Auto(user[0], user[1])
+            test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
                 test.kitene_confirm()
             except Exception as e:
@@ -485,7 +471,7 @@ if __name__ == '__main__':
 
     elif answer == "2":
         for user in users:
-            test = Spgirl_Auto(user[0], user[1])
+            test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
                 test.kitene_confirm()
             except Exception as e:
@@ -497,7 +483,7 @@ if __name__ == '__main__':
 
     elif answer == "3":
         for user in users:
-            test = Spgirl_Auto(user[0], user[1])
+            test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
                 test.kitene_limit()
             except Exception as e:
