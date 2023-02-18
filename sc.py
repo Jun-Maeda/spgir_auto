@@ -15,6 +15,7 @@ import dropbox
 import chromedriver_binary
 from dotenv import load_dotenv
 import subprocess
+import datetime
 
 load_dotenv()
 
@@ -221,15 +222,18 @@ class Spgirl_Auto:
 
         follows = f"logs/{self.username}/follows.txt"
         my_log = []
+        my_log.append(datetime.datetime.now())
 
         # もしフォローファイルがなかったら作成
         if (os.path.isfile(follows) == False):
             with open(follows, 'w') as f:
                 pass
-
-        # 対象のURLリストから一番上のURLを取得
-        with open(text_file, mode="r") as f:
-            targets = f.readlines()
+        try:
+            # 対象のURLリストから一番上のURLを取得
+            with open(text_file, mode="r") as f:
+                targets = f.readlines()
+        except:
+            my_log.append("URLファイルがないか不正です。")
 
         # フォローした人たちの読み込み
         with open(follows, mode='r') as f:
@@ -491,12 +495,14 @@ if __name__ == '__main__':
     elif answer == "3":
         for user in users:
             test = Spgirl_Auto(user[0], user[1], my_driver())
+            logs = f"all_log.txt"
+            with open(logs, mode="a") as f:
+                f.write("%s\n" % datetime.datetime.now())
             try:
                 test.kitene_limit()
             except Exception as e:
                 print("キテねに失敗しました")
                 print(e)
-                logs = f"all_log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
     elif answer == "4":
