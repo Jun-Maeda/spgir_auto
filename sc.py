@@ -14,6 +14,7 @@ from selenium import webdriver
 import dropbox
 import chromedriver_binary
 from dotenv import load_dotenv
+import subprocess
 
 load_dotenv()
 
@@ -443,7 +444,7 @@ if __name__ == '__main__':
     # 時間のカウント
     time_sta = time.perf_counter()
 
-    answer = input("[1]自動キテね実行 [2]残りのキテね確認 [3]マッチユーザーのみ [4]本日のファイルダウンロード")
+    answer = input("[1]自動キテね実行 [2]残りのキテね確認 [3]マッチユーザーのみ [4]本日のファイルダウンロード [5]キテねリスト削除 [6]履歴削除")
 
     # ユーザー情報の取り込み
     users = []
@@ -469,14 +470,16 @@ if __name__ == '__main__':
                 logs = f"logs/{user[0]}/log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
-
-            # 確認
+        time.sleep(5)
+        # 確認
+        for user in users:
+            test = Spgirl_Auto(user[0], user[1])
             try:
-                test.kitene_limit()
+                test.kitene_confirm()
             except Exception as e:
                 print("キテねの確認に失敗しました")
                 print(e)
-                logs = f"logs/{user[0]}/log.txt"
+                logs = f"all_log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
 
@@ -505,6 +508,25 @@ if __name__ == '__main__':
                     f.write("%s\n" % e)
     elif answer == "4":
         my_drop_box()
+
+    elif answer == "5":
+        print("キテねリストを消去します")
+        try:
+            cmd = 'rm logs/*/follows.txt'
+            subprocess.run(cmd, shell=True)
+            print("消去しました。")
+        except:
+            print("失敗しました")
+
+    elif answer == "6":
+        print("履歴を消去します")
+        try:
+            cmd = 'rm logs/*/log.txt'
+            subprocess.run(cmd, shell=True)
+            print("消去しました。")
+        except:
+            print("失敗しました")
+
     else:
         print("不正な入力です。")
 
