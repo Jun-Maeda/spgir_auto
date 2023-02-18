@@ -12,21 +12,29 @@ import re
 import sys
 from selenium import webdriver
 import dropbox
+import chromedriver_binary
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def my_drop_box():
-    dropbox_access_token = os.environ['TOKEN']
-    # dropbox_path = "/heaven_auto"
+    app_key = os.environ['KEY']
+    app_secret = os.environ['PASS']
+    token = os.environ['TOKEN']
+    token2 = os.environ['TOKEN2']
 
-    drop = dropbox.Dropbox(dropbox_access_token)
+    # 内容確認
+    drop = dropbox.Dropbox(app_key=app_key, app_secret=app_secret,
+                           oauth2_refresh_token=token)
+    drop2 = dropbox.Dropbox(app_key=app_key, app_secret=app_secret,
+                            oauth2_refresh_token=token2)
     inp = input("読み込むフォルダ名を入力してください")
     today_path = f'/heaven_auto/{inp}/'
     for entry in drop.files_list_folder(f'{today_path}urls').entries:
-        drop.files_download_to_file(f'urls/{entry.name}', f'{today_path}urls/{entry.name}')
+        drop2.files_download_to_file(f'urls/{entry.name}', f'{today_path}urls/{entry.name}')
 
-    drop.files_download_to_file('account.txt', f'{today_path}account.txt')
-
-
+    drop2.files_download_to_file('account.txt', f'{today_path}account.txt')
 
 
 class Spgirl_Auto:
@@ -217,7 +225,7 @@ class Spgirl_Auto:
 
         # ヘッドレスモード
         options.headless = True
-        options.add_argument('--disable-gpu')
+        # options.add_argument('--disable-gpu')
 
         # 画像非表示
         options.add_argument('--blink-settings=imagesEnabled=false')
