@@ -122,7 +122,7 @@ class Spgirl_Auto:
     def kitene_limit(self):
         driver = self.login()
         time.sleep(2)
-        logs = f"logs/{self.username}/log.txt"
+        logs = f"all_log.txt"
         print(self.username)
 
         # 認証コードを求められた場合
@@ -343,8 +343,6 @@ class Spgirl_Auto:
                                     EC.visibility_of_element_located((By.CLASS_NAME, "kitene_send")))
                                 kitene = driver.find_element(By.CLASS_NAME, value="kitene_send")
                                 kitene.click()
-                                # time.sleep(1)
-                                # wait.until(EC.alert_is_present())
                                 Alert(driver).accept()
                                 print(f"キテネを押しました")
                                 my_log.append("キテねを押しました")
@@ -430,7 +428,7 @@ class Spgirl_Auto:
 
         driver.close()
 
-        logs = f"logs/{self.username}/log.txt"
+        logs = f"log.txt"
         with open(logs, mode="w") as f:
             for d in my_log:
                 f.write("%s\n" % d)
@@ -464,7 +462,7 @@ if __name__ == '__main__':
             except Exception as e:
                 print("キテねに失敗しました")
                 print(e)
-                logs = f"logs/{user[0]}/log.txt"
+                logs = f"log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
         time.sleep(5)
