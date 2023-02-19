@@ -523,7 +523,8 @@ if __name__ == '__main__':
     elif answer == "6":
         print("履歴を消去します")
         try:
-            cmd = 'rm logs/*/log.txt'
+            # cmd = 'rm logs/*/log.txt'
+            cmd = 'rm main_logs/*'
             subprocess.run(cmd, shell=True)
             print("消去しました。")
         except:
