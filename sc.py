@@ -525,7 +525,12 @@ if __name__ == '__main__':
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
     elif answer == "4":
-        my_drop_box()
+        try:
+            my_drop_box()
+            print("ダウンロードしました")
+        except Exception as e:
+            print("ダウンロード失敗しました")
+            print(e)
 
     elif answer == "5":
         print("キテねリストを消去します")
