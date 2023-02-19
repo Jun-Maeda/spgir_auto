@@ -118,7 +118,7 @@ class Spgirl_Auto:
             with open(logs, mode="a") as f:
                 f.write("%s\n" % log)
                 print(log)
-        driver.close()
+        driver.quit()
         return log
 
     # きてねの残りを数えてキテねを実行
@@ -168,7 +168,7 @@ class Spgirl_Auto:
                     log = "失敗しました"
             with open(logs, mode="a") as f:
                 f.write("%s\n" % log)
-        driver.close()
+        driver.quit()
 
     # マイページから自分のURLを取得する(エリアが変わらなければやる必要なし)
     def mypage(self):
@@ -428,7 +428,7 @@ class Spgirl_Auto:
         except:
             pass
 
-        driver.close()
+        driver.quit()
 
         logs = f"log.txt"
         with open(logs, mode="w") as f:
