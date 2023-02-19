@@ -87,7 +87,7 @@ class Spgirl_Auto:
     def kitene_confirm(self):
         driver = self.login()
         time.sleep(2)
-        logs = "all_log.txt"
+        logs = "log.txt"
         print(self.username)
         with open(logs, mode="a") as f:
             f.write("%s\n" % self.username)
@@ -122,7 +122,7 @@ class Spgirl_Auto:
     def kitene_limit(self):
         driver = self.login()
         time.sleep(2)
-        logs = f"all_log.txt"
+        logs = f"log.txt"
         print(self.username)
 
         # 認証コードを求められた場合
@@ -222,7 +222,6 @@ class Spgirl_Auto:
 
         follows = f"logs/{self.username}/follows.txt"
         my_log = []
-        my_log.append(datetime.datetime.now())
 
         # もしフォローファイルがなかったら作成
         if (os.path.isfile(follows) == False):
@@ -435,6 +434,9 @@ class Spgirl_Auto:
 
 
 if __name__ == '__main__':
+    start_desc = f"{datetime.datetime.now}の実行履歴"
+    with open("log.txt", mode="a") as f:
+        f.write("%s\n" % start_desc)
 
     # 時間のカウント
     time_sta = time.perf_counter()
@@ -474,7 +476,7 @@ if __name__ == '__main__':
             except Exception as e:
                 print("キテねの確認に失敗しました")
                 print(e)
-                logs = f"all_log.txt"
+                logs = f"log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
 
@@ -486,14 +488,14 @@ if __name__ == '__main__':
             except Exception as e:
                 print("キテねの確認に失敗しました")
                 print(e)
-                logs = f"all_log.txt"
+                logs = f"log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
 
     elif answer == "3":
         for user in users:
             test = Spgirl_Auto(user[0], user[1], my_driver())
-            logs = f"all_log.txt"
+            logs = f"log.txt"
             with open(logs, mode="a") as f:
                 f.write("%s\n" % datetime.datetime.now())
             try:
@@ -530,5 +532,7 @@ if __name__ == '__main__':
     # 時間を測る
     time_end = time.perf_counter()
     tim = time_end - time_sta
+    result_time = tim / 60
 
-    print(tim / 60)
+    with open("log.txt", mode="a") as f:
+        f.write("%s\n" % result_time)
