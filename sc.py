@@ -16,6 +16,7 @@ import chromedriver_binary
 from dotenv import load_dotenv
 import subprocess
 import datetime
+import slackweb
 
 load_dotenv()
 
@@ -88,6 +89,7 @@ class Spgirl_Auto:
         driver = self.login()
         time.sleep(2)
         logs = "log.txt"
+        log = ""
         print(self.username)
         with open(logs, mode="a") as f:
             f.write("%s\n" % self.username)
@@ -117,6 +119,7 @@ class Spgirl_Auto:
                 f.write("%s\n" % log)
                 print(log)
         driver.close()
+        return log
 
     # きてねの残りを数えてキテねを実行
     def kitene_limit(self):
@@ -472,28 +475,41 @@ if __name__ == '__main__':
                     f.write("%s\n" % e)
         time.sleep(5)
         # 確認
+        slack_send = ""
         for user in users:
             test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
-                test.kitene_confirm()
+                sl = test.kitene_confirm()
             except Exception as e:
-                print("キテねの確認に失敗しました")
+                sl = "キテねの確認に失敗しました"
+                print(sl)
                 print(e)
                 logs = f"log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
+            slack_send += f"\n{user[0]}\n{sl}\n"
+        # Slackに通知
+        slack = slackweb.Slack(url=os.environ['SLACK'])
+        slack.notify(text=slack_send)
 
     elif answer == "2":
+        slack_send = ""
         for user in users:
             test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
-                test.kitene_confirm()
+                sl = test.kitene_confirm()
             except Exception as e:
-                print("キテねの確認に失敗しました")
+                sl = "キテねの確認に失敗しました"
+                print(sl)
                 print(e)
                 logs = f"log.txt"
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
+            slack_send += f"\n{user[0]}\n{sl}\n"
+        # Slackに通知
+        slack = slackweb.Slack(url=os.environ['SLACK'])
+        slack.notify(text=slack_send)
+
 
     elif answer == "3":
         for user in users:
@@ -537,6 +553,9 @@ if __name__ == '__main__':
     time_end = time.perf_counter()
     tim = time_end - time_sta
     result_time = tim / 60
+    print(result_time)
 
     with open("log.txt", mode="a") as f:
         f.write("%s\n" % result_time)
+
+
