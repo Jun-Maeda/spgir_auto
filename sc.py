@@ -434,7 +434,8 @@ class Spgirl_Auto:
 
 
 if __name__ == '__main__':
-    start_desc = f"{datetime.datetime.now}の実行履歴"
+    start_desc = f"{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))}の実行"
+    print(start_desc)
     with open("log.txt", mode="a") as f:
         f.write("%s\n" % start_desc)
 
