@@ -461,6 +461,8 @@ if __name__ == '__main__':
 
             # 自動キテね
             try:
+                with open("log.txt", mode="a") as f:
+                    f.write("%s\n" % user[0])
                 test.url_read_kitene()
             except Exception as e:
                 print("キテねに失敗しました")
