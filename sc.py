@@ -243,139 +243,82 @@ class Spgirl_Auto:
         my_follow = my_follow_file.split()
 
         driver = self.driver
+        try:
+            driver.get(f"{targets[0][3:]}reviews/?lo=1")
+            driver.implicitly_wait(10)
+            driver.execute_script("window.scrollTo(0, 0)")
+            WebDriverWait(driver, 30).until(
+                EC.visibility_of_element_located((By.ID, "login_header")))
+            driver.find_element(By.ID, value='login_header').click()
+            driver.find_element(By.ID, value='user').send_keys(self.username)
+            driver.find_element(By.ID, value='pass').send_keys(self.password)
+            time.sleep(1)
+            driver.find_element(By.ID, value='submitLogin').click()
+            time.sleep(1)
 
-        driver.get(f"{targets[0][3:]}reviews/?lo=1")
-        driver.implicitly_wait(10)
-        driver.execute_script("window.scrollTo(0, 0)")
-        WebDriverWait(driver, 30).until(
-            EC.visibility_of_element_located((By.ID, "login_header")))
-        driver.find_element(By.ID, value='login_header').click()
-        driver.find_element(By.ID, value='user').send_keys(self.username)
-        driver.find_element(By.ID, value='pass').send_keys(self.password)
-        time.sleep(1)
-        driver.find_element(By.ID, value='submitLogin').click()
-        time.sleep(1)
+            wait = WebDriverWait(driver, 3)
 
-        wait = WebDriverWait(driver, 3)
+            print(self.username)
 
-        print(self.username)
+            for target in targets:
+                tar = target.split(" ")
+                many = int(tar[0])
+                tar_url = tar[1]
+                cou = 0
+                error = 0
 
-        for target in targets:
-            tar = target.split(" ")
-            many = int(tar[0])
-            tar_url = tar[1]
-            cou = 0
-            error = 0
-
-            # キテねできなかった時
-            try:
-                alert = driver.switch_to.alert
-                print(alert.text)
-                alert.accept()
-                my_log.append(alert.text)
-            except:
-                pass
-
-            driver.get(f"{tar_url}reviews/?lo=1")
-            print(tar_url)
-            # 対象の口コミ一覧
-            my_url = str(driver.current_url)
-            my_log.append(tar_url)
-            while cou < many:
+                # キテねできなかった時
                 try:
-                    wait.until(EC.alert_is_present())
                     alert = driver.switch_to.alert
-                    # print(alert.text)
+                    print(alert.text)
                     alert.accept()
+                    my_log.append(alert.text)
                 except:
                     pass
 
-                # 表示されたページのメンバーのURLを取得
-                try:
-                    WebDriverWait(driver, 10).until(
-                        EC.visibility_of_element_located((By.CLASS_NAME, "review-item-shopnameButton")))
-                    members = driver.find_elements(By.CLASS_NAME, value='review-item-shopnameButton')
-                    ac_url = []
+                driver.get(f"{tar_url}reviews/?lo=1")
+                print(tar_url)
+                # 対象の口コミ一覧
+                my_url = str(driver.current_url)
+                my_log.append(tar_url)
+                while cou < many:
+                    try:
+                        wait.until(EC.alert_is_present())
+                        alert = driver.switch_to.alert
+                        # print(alert.text)
+                        alert.accept()
+                    except:
+                        pass
 
-                    now_url = driver.current_url
-                    print(now_url)
-                    my_log.append(now_url)
-                    time.sleep(2)
+                    # 表示されたページのメンバーのURLを取得
+                    try:
+                        WebDriverWait(driver, 10).until(
+                            EC.visibility_of_element_located((By.CLASS_NAME, "review-item-shopnameButton")))
+                        members = driver.find_elements(By.CLASS_NAME, value='review-item-shopnameButton')
+                        ac_url = []
 
-                    # 取得したURLをリストにする
-                    for i in range(len(members)):
-                        try:
-                            pick = driver.find_elements(By.CLASS_NAME, value='review-item-shopnameButton')[
-                                i].find_element(
-                                By.TAG_NAME, value="a").get_attribute(name="href")
-                            ac_url.append(pick)
-                        except:
-                            my_log.append("退会済みユーザーがいました")
-                            pass
-                    print(len(ac_url))
-                    my_log.append(len(ac_url))
+                        now_url = driver.current_url
+                        print(now_url)
+                        my_log.append(now_url)
+                        time.sleep(2)
 
-                    # 取得したurlからすでに自分のフォローした人がいないか確認
-                    for i in ac_url:
-                        url = i
-                        driver.implicitly_wait(5)
-                        try:
-                            alert = driver.switch_to.alert
-                            print(alert.text)
-                            my_log.append(alert.text)
-                            alert.accept()
-                        except:
-                            pass
-
-                        print(url)
-                        my_log.append(url)
-
-                        # もし口コミした人のURLがフォローリストにいなくて、指定の数以内の場合
-                        if not url in my_follow and cou < many:
-                            driver.get(url)
+                        # 取得したURLをリストにする
+                        for i in range(len(members)):
                             try:
-                                # if driver.switch_to.alert:
-                                #     alert = driver.switch_to.alert
-                                #     print(alert.text)
-                                #     my_log.append(alert.text)
-                                #     alert.accept()
-
-                                # wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "kitene_send")))
-
-                                # driver.save_screenshot("スクショ.img")
-                                WebDriverWait(driver, 10).until(
-                                    EC.visibility_of_element_located((By.CLASS_NAME, "kitene_send")))
-                                kitene = driver.find_element(By.CLASS_NAME, value="kitene_send")
-                                kitene.click()
-                                Alert(driver).accept()
-                                print(f"キテネを押しました")
-                                my_log.append("キテねを押しました")
-                                cou += 1
-                                my_follow.append(url)
-                                if cou >= many:
-                                    print(f'{cou}回キテねしました')
-                                    my_log.append(f"{cou}回キテねしました")
-                                    break
-                            except TimeoutException as e:
-                                print("時間切れです")
-                                error += 1
-                                print(e)
-                                my_follow.append(url)
-                                if error >= 10:
-                                    break
+                                pick = driver.find_elements(By.CLASS_NAME, value='review-item-shopnameButton')[
+                                    i].find_element(
+                                    By.TAG_NAME, value="a").get_attribute(name="href")
+                                ac_url.append(pick)
+                            except:
+                                my_log.append("退会済みユーザーがいました")
                                 pass
-                            except Exception as e:
-                                error += 1
-                                print(f"失敗しました {error}")
-                                print(e)
-                                my_follow.append(url)
-                                my_log.append(f"失敗しました{error}")
-                                my_log.append(e)
-                                if error >= 10:
-                                    break
-                                pass
+                        print(len(ac_url))
+                        my_log.append(len(ac_url))
 
-                            # キテねできなかった時
+                        # 取得したurlからすでに自分のフォローした人がいないか確認
+                        for i in ac_url:
+                            url = i
+                            driver.implicitly_wait(5)
                             try:
                                 alert = driver.switch_to.alert
                                 print(alert.text)
@@ -383,59 +326,124 @@ class Spgirl_Auto:
                                 alert.accept()
                             except:
                                 pass
-                            time.sleep(1)
-                            # driver.back()
 
-                        # エラーが10以上だった場合
-                        if error >= 10:
-                            print("エラーが10回以上でました")
-                            my_log.append("エラーが10回以上でました")
+                            print(url)
+                            my_log.append(url)
+
+                            # もし口コミした人のURLがフォローリストにいなくて、指定の数以内の場合
+                            if not url in my_follow and cou < many:
+                                driver.get(url)
+                                try:
+                                    # if driver.switch_to.alert:
+                                    #     alert = driver.switch_to.alert
+                                    #     print(alert.text)
+                                    #     my_log.append(alert.text)
+                                    #     alert.accept()
+
+                                    # wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "kitene_send")))
+
+                                    # driver.save_screenshot("スクショ.img")
+                                    WebDriverWait(driver, 10).until(
+                                        EC.visibility_of_element_located((By.CLASS_NAME, "kitene_send")))
+                                    kitene = driver.find_element(By.CLASS_NAME, value="kitene_send")
+                                    kitene.click()
+                                    Alert(driver).accept()
+                                    print(f"キテネを押しました")
+                                    my_log.append("キテねを押しました")
+                                    cou += 1
+                                    my_follow.append(url)
+                                    if cou >= many:
+                                        print(f'{cou}回キテねしました')
+                                        my_log.append(f"{cou}回キテねしました")
+                                        break
+                                except TimeoutException as e:
+                                    print("時間切れです")
+                                    error += 1
+                                    print(e)
+                                    my_follow.append(url)
+                                    if error >= 10:
+                                        break
+                                    pass
+                                except Exception as e:
+                                    error += 1
+                                    print(f"失敗しました {error}")
+                                    print(e)
+                                    my_follow.append(url)
+                                    my_log.append(f"失敗しました{error}")
+                                    my_log.append(e)
+                                    if error >= 10:
+                                        break
+                                    pass
+
+                                # キテねできなかった時
+                                try:
+                                    alert = driver.switch_to.alert
+                                    print(alert.text)
+                                    my_log.append(alert.text)
+                                    alert.accept()
+                                except:
+                                    pass
+                                time.sleep(1)
+                                # driver.back()
+
+                            # エラーが10以上だった場合
+                            if error >= 10:
+                                print("エラーが10回以上でました")
+                                my_log.append("エラーが10回以上でました")
+                                break
+
+                        if error >= 10 or cou >= many:
                             break
-
-                    if error >= 10 or cou >= many:
+                    except Exception as e:
+                        print(e)
+                    try:
+                        if driver.current_url == 'data:,':
+                            driver.forward()
+                        time.sleep(3)
+                        driver.get(my_url)
+                        print(driver.current_url)
+                        my_log.append(driver.current_url)
+                        print("次のページに進みます")
+                        my_log.append("次のページに進みます")
+                        WebDriverWait(driver, 30).until(
+                            EC.visibility_of_element_located((By.CLASS_NAME, "next")))
+                        driver.get(driver.find_element(By.CLASS_NAME, value='next').get_attribute(name='href'))
+                        my_url = str(driver.current_url)
+                    except:
+                        print("次のページはありません")
+                        my_log.append("次のページはありません")
                         break
-                except Exception as e:
-                    print(e)
-                try:
-                    if driver.current_url == 'data:,':
-                        driver.forward()
-                    time.sleep(3)
-                    driver.get(my_url)
-                    print(driver.current_url)
-                    my_log.append(driver.current_url)
-                    print("次のページに進みます")
-                    my_log.append("次のページに進みます")
-                    WebDriverWait(driver, 30).until(
-                        EC.visibility_of_element_located((By.CLASS_NAME, "next")))
-                    driver.get(driver.find_element(By.CLASS_NAME, value='next').get_attribute(name='href'))
-                    my_url = str(driver.current_url)
-                except:
-                    print("次のページはありません")
-                    my_log.append("次のページはありません")
+
+                # キテねした人をフォローリストに追加
+                with open(follows, mode="a") as f:
+                    for d in my_follow:
+                        f.write("%s\n" % d)
+
+                if error >= 10:
                     break
 
-            # キテねした人をフォローリストに追加
-            with open(follows, mode="a") as f:
-                for d in my_follow:
+            try:
+                alert = driver.switch_to.alert
+                print(alert.text)
+                my_log.append(alert.text)
+                alert.accept()
+            except:
+                pass
+
+            driver.quit()
+
+            logs = f"log.txt"
+            with open(logs, mode="w") as f:
+                for d in my_log:
                     f.write("%s\n" % d)
 
-            if error >= 10:
-                break
-
-        try:
-            alert = driver.switch_to.alert
-            print(alert.text)
-            my_log.append(alert.text)
-            alert.accept()
-        except:
-            pass
-
-        driver.quit()
-
-        logs = f"log.txt"
-        with open(logs, mode="w") as f:
-            for d in my_log:
-                f.write("%s\n" % d)
+        except Exception as ex:
+            driver.quit()
+            print("キテねに失敗しました")
+            print(ex)
+            log = f"log.txt"
+            with open(log, mode="a") as fi:
+                fi.write("%s\n" % ex)
 
 
 if __name__ == '__main__':
@@ -461,20 +469,30 @@ if __name__ == '__main__':
         users.append(l)
 
     if answer == "1":
+        # 念の為chromeを停止
+        cmd = 'pkill chrome'
+        subprocess.run(cmd, shell=True)
         for user in users:
             test = Spgirl_Auto(user[0], user[1], my_driver())
-            # 自動キテね
-            try:
-                with open("log.txt", mode="a") as f:
-                    f.write("%s\n" % user[0])
-                test.url_read_kitene()
-            except Exception as e:
-                print("キテねに失敗しました")
-                print(e)
-                logs = f"log.txt"
-                with open(logs, mode="a") as f:
-                    f.write("%s\n" % e)
-        time.sleep(5)
+
+            with open("log.txt", mode="a") as f:
+                f.write("%s\n" % user[0])
+            test.url_read_kitene()
+
+            # # 自動キテね
+            # try:
+            #     with open("log.txt", mode="a") as f:
+            #         f.write("%s\n" % user[0])
+            #     test.url_read_kitene()
+            # except Exception as e:
+            #     print("キテねに失敗しました")
+            #     print(e)
+            #     logs = f"log.txt"
+            #     with open(logs, mode="a") as f:
+            #         f.write("%s\n" % e)
+        time.sleep(3)
+        # 念の為chromeを停止
+        cmd = 'pkill chrome'
         # 確認
         slack_send = ""
         for user in users:
@@ -494,6 +512,9 @@ if __name__ == '__main__':
         slack.notify(text=slack_send)
 
     elif answer == "2":
+        # 念の為chromeを停止
+        cmd = 'pkill chrome'
+        subprocess.run(cmd, shell=True)
         slack_send = ""
         for user in users:
             test = Spgirl_Auto(user[0], user[1], my_driver())
@@ -513,6 +534,9 @@ if __name__ == '__main__':
 
 
     elif answer == "3":
+        # 念の為chromeを停止
+        cmd = 'pkill chrome'
+        subprocess.run(cmd, shell=True)
         for user in users:
             test = Spgirl_Auto(user[0], user[1], my_driver())
             logs = f"log.txt"
