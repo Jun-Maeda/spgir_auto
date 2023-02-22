@@ -560,7 +560,7 @@ if __name__ == '__main__':
     elif answer == "5":
         print("キテねリストを消去します")
         try:
-            cmd = 'rm logs/*/follows.txt'
+            cmd = 'yes |　rm logs/*/follows.txt'
             subprocess.run(cmd, shell=True)
             print("消去しました。")
         except:
@@ -570,7 +570,7 @@ if __name__ == '__main__':
         print("履歴を消去します")
         try:
             # cmd = 'rm logs/*/log.txt'
-            cmd = 'rm main_logs/*'
+            cmd = 'yes |　rm main_logs/*'
             subprocess.run(cmd, shell=True)
             print("消去しました。")
         except:
