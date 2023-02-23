@@ -562,7 +562,7 @@ if __name__ == '__main__':
     elif answer == "5":
         print("キテねリストを消去します")
         try:
-            cmd = 'yes |　rm logs/*/follows.txt'
+            cmd = 'rm logs/*/follows.txt'
             subprocess.run(cmd, shell=True)
             print("消去しました。")
         except:
