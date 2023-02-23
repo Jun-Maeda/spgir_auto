@@ -491,11 +491,12 @@ if __name__ == '__main__':
             #     with open(logs, mode="a") as f:
             #         f.write("%s\n" % e)
         time.sleep(3)
-        # 念の為chromeを停止
-        cmd = 'pkill chrome'
         # 確認
         slack_send = ""
         for user in users:
+            # 念の為chromeを停止
+            cmd = 'pkill chrome'
+            subprocess.run(cmd, shell=True)
             test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
                 sl = test.kitene_confirm()
@@ -512,10 +513,10 @@ if __name__ == '__main__':
         slack.notify(text=slack_send)
 
     elif answer == "2":
+        slack_send = ""
         # 念の為chromeを停止
         cmd = 'pkill chrome'
         subprocess.run(cmd, shell=True)
-        slack_send = ""
         for user in users:
             test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
@@ -534,10 +535,11 @@ if __name__ == '__main__':
 
 
     elif answer == "3":
-        # 念の為chromeを停止
-        cmd = 'pkill chrome'
-        subprocess.run(cmd, shell=True)
         for user in users:
+            # 念の為chromeを停止
+            cmd = 'pkill chrome'
+            subprocess.run(cmd, shell=True)
+
             test = Spgirl_Auto(user[0], user[1], my_driver())
             logs = f"log.txt"
             with open(logs, mode="a") as f:
