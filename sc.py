@@ -20,6 +20,7 @@ import slackweb
 
 load_dotenv()
 
+
 def my_driver():
     # スクレイピング
     options = webdriver.ChromeOptions()
@@ -44,7 +45,6 @@ def my_driver():
     driver.set_window_size(1500, 1500)
 
     return driver
-
 
 
 def my_drop_box():
@@ -208,8 +208,6 @@ class Spgirl_Auto:
                 with open(text_file, mode="a") as f:
                     f.write(s.get_attribute(name="href"))
                     f.write("\n")
-
-
 
     # ファイルからURLと回数を取得してそれぞれその回数だけキテねする
     def url_read_kitene(self):
@@ -514,10 +512,10 @@ if __name__ == '__main__':
 
     elif answer == "2":
         slack_send = ""
-        # 念の為chromeを停止
-        cmd = 'pkill chrome'
-        subprocess.run(cmd, shell=True)
         for user in users:
+            # 念の為chromeを停止
+            cmd = 'pkill chrome'
+            subprocess.run(cmd, shell=True)
             test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
                 sl = test.kitene_confirm()
@@ -535,6 +533,7 @@ if __name__ == '__main__':
 
 
     elif answer == "3":
+        slack_send = ""
         for user in users:
             # 念の為chromeを停止
             cmd = 'pkill chrome'
@@ -551,6 +550,25 @@ if __name__ == '__main__':
                 print(e)
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
+
+        for user in users:
+            # 念の為chromeを停止
+            cmd = 'pkill chrome'
+            subprocess.run(cmd, shell=True)
+            test = Spgirl_Auto(user[0], user[1], my_driver())
+            try:
+                sl = test.kitene_confirm()
+            except Exception as e:
+                sl = "キテねの確認に失敗しました"
+                print(sl)
+                print(e)
+                logs = f"log.txt"
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % e)
+            slack_send += f"\n{user[0]}\n{sl}\n"
+        # Slackに通知
+        slack = slackweb.Slack(url=os.environ['SLACK'])
+        slack.notify(text=slack_send)
     elif answer == "4":
         try:
             my_drop_box()
@@ -589,5 +607,3 @@ if __name__ == '__main__':
 
     with open("log.txt", mode="a") as f:
         f.write("%s\n" % result_time)
-
-
