@@ -590,7 +590,7 @@ if __name__ == '__main__':
         print("履歴を消去します")
         try:
             # cmd = 'rm logs/*/log.txt'
-            cmd = 'yes |　rm main_logs/*'
+            cmd = 'rm main_logs/*'
             subprocess.run(cmd, shell=True)
             print("消去しました。")
         except:
