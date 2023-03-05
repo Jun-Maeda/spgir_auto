@@ -25,7 +25,8 @@ def my_driver():
     # スクレイピング
     options = webdriver.ChromeOptions()
 
-    serv = Service(ChromeDriverManager().install())  # driverの自動更新
+    # driverの自動更新
+    # serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
     options.headless = True
