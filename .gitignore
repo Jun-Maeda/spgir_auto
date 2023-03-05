@@ -79,7 +79,6 @@ target/
 
 # celery beat schedule file
 celerybeat-schedule
-
 # SageMath parsed files
 *.sage.py
 
@@ -107,3 +106,8 @@ venv.bak/
 account.txt
 old/
 urls/
+/main_logs/
+/log.txt
+/nohup.out
+/all_log.txt
+/logs/
