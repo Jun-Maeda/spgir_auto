@@ -83,15 +83,14 @@ def clear_driver():
 
 
 class Spgirl_Auto:
-    def __init__(self, username, password, dri):
+    def __init__(self, username, password):
         self.username = username
         self.password = password
-        self.driver = dri
 
     # ログインするまでの処理
     def login(self):
         url = "https://spgirl.cityheaven.net/J1Login.php"
-        driver = self.driver
+        driver = my_driver()
         driver.get(url)
         time.sleep(2)
         driver.find_element(by=By.ID, value='userid').send_keys(self.username)
@@ -214,7 +213,7 @@ class Spgirl_Auto:
         # url = self.mypage()
         # ToDo:個人のURLを保管する場所作る
         url = "https://www.cityheaven.net/tokyo/A1304/A130401/fullco/girlid-44275681/?mypage_flg=1"
-        driver = self.driver
+        driver = my_driver()
         wait = WebDriverWait(driver=driver, timeout=60)
         driver.get(url)
         driver.find_element(By.ID, value='location-breadcrumbs-wrap').find_elements(By.TAG_NAME, value="li")[4].click()
@@ -267,7 +266,7 @@ class Spgirl_Auto:
             my_follow_file = f.read()
         my_follow = my_follow_file.split()
 
-        driver = self.driver
+        driver = my_driver()
         driver.get(f"{targets[0][3:]}reviews/?lo=1")
         driver.implicitly_wait(10)
         driver.execute_script("window.scrollTo(0, 0)")
@@ -538,7 +537,7 @@ if __name__ == '__main__':
             # subprocess.run(cmd, shell=True)
             clear_driver()
 
-            test = Spgirl_Auto(user[0], user[1], my_driver())
+            test = Spgirl_Auto(user[0], user[1])
             clear_driver()
             try:
                 sl = test.kitene_confirm()
@@ -565,7 +564,7 @@ if __name__ == '__main__':
             # subprocess.run(cmd, shell=True)
             clear_driver()
 
-            test = Spgirl_Auto(user[0], user[1], my_driver())
+            test = Spgirl_Auto(user[0], user[1])
             clear_driver()
             try:
                 sl = test.kitene_confirm()
@@ -592,7 +591,7 @@ if __name__ == '__main__':
             # subprocess.run(cmd, shell=True)
             clear_driver()
 
-            test = Spgirl_Auto(user[0], user[1], my_driver())
+            test = Spgirl_Auto(user[0], user[1])
             clear_driver()
             logs = f"log.txt"
             with open(logs, mode="a") as f:
@@ -614,7 +613,7 @@ if __name__ == '__main__':
             # subprocess.run(cmd, shell=True)
             clear_driver()
 
-            test = Spgirl_Auto(user[0], user[1], my_driver())
+            test = Spgirl_Auto(user[0], user[1])
             try:
                 sl = test.kitene_confirm()
                 clear_driver()
