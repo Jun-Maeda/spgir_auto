@@ -579,7 +579,10 @@ if __name__ == '__main__':
 
 
     elif answer == "3":
-        clear_driver()
+        try:
+            clear_driver()
+        except:
+            pass
         slack_send = ""
         for user in users:
             # 念の為chromeを停止
