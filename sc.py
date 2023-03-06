@@ -506,6 +506,7 @@ if __name__ == '__main__':
                 print("URLファイルがありません")
             else:
                 test = Spgirl_Auto(user[0], user[1], my_driver())
+                clear_driver()
 
 
                 with open("log.txt", mode="a") as f:
@@ -526,7 +527,6 @@ if __name__ == '__main__':
         time.sleep(3)
         # 確認
         slack_send = ""
-        clear_driver()
         for user in users:
             # 念の為chromeを停止
             # cmd = 'killall chrome'
@@ -534,10 +534,13 @@ if __name__ == '__main__':
             clear_driver()
 
             test = Spgirl_Auto(user[0], user[1], my_driver())
+            clear_driver()
             try:
                 sl = test.kitene_confirm()
+                clear_driver()
             except Exception as e:
                 sl = "キテねの確認に失敗しました"
+                clear_driver()
                 print(sl)
                 print(e)
                 logs = f"log.txt"
@@ -547,7 +550,6 @@ if __name__ == '__main__':
         # Slackに通知
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
-        clear_driver()
 
     elif answer == "2":
         clear_driver()
@@ -559,10 +561,12 @@ if __name__ == '__main__':
             clear_driver()
 
             test = Spgirl_Auto(user[0], user[1], my_driver())
+            clear_driver()
             try:
                 sl = test.kitene_confirm()
             except Exception as e:
                 sl = "キテねの確認に失敗しました"
+                clear_driver()
                 print(sl)
                 print(e)
                 logs = f"log.txt"
@@ -572,7 +576,6 @@ if __name__ == '__main__':
         # Slackに通知
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
-        clear_driver()
 
 
     elif answer == "3":
@@ -585,13 +588,16 @@ if __name__ == '__main__':
             clear_driver()
 
             test = Spgirl_Auto(user[0], user[1], my_driver())
+            clear_driver()
             logs = f"log.txt"
             with open(logs, mode="a") as f:
                 f.write("%s\n" % datetime.datetime.now())
             try:
                 test.kitene_limit()
+                clear_driver()
             except Exception as e:
                 print("キテねに失敗しました")
+                clear_driver()
                 print(e)
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
@@ -606,8 +612,10 @@ if __name__ == '__main__':
             test = Spgirl_Auto(user[0], user[1], my_driver())
             try:
                 sl = test.kitene_confirm()
+                clear_driver()
             except Exception as e:
                 sl = "キテねの確認に失敗しました"
+                clear_driver()
                 print(sl)
                 print(e)
                 logs = f"log.txt"
