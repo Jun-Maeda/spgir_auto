@@ -76,6 +76,8 @@ def clear_driver():
         subprocess.run(cmd1, shell=True)
         cmd2 = "ps aux | grep 'Google Chrome' | grep -v grep | awk '{ print \"kill -9\", $2 }' | sh"
         subprocess.run(cmd2, shell=True)
+        cmd3 = "pkill chrome"
+        subprocess.run(cmd3, shell=True)
     except:
         pass
 
