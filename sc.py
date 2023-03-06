@@ -69,12 +69,15 @@ def my_drop_box():
 
 # ドライバーを一旦すべて終了
 def clear_driver():
-    cmd = "ps aux | grep chromedriver | grep -v grep | awk '{ print \"kill -9\", $2 }' | sh"
-    subprocess.run(cmd, shell=True)
-    cmd1 = "ps aux | grep 'Google Helper' | grep -v grep | awk '{ print \"kill -9\", $2 }' | sh"
-    subprocess.run(cmd1, shell=True)
-    cmd2 = "ps aux | grep 'Google Chrome' | grep -v grep | awk '{ print \"kill -9\", $2 }' | sh"
-    subprocess.run(cmd2, shell=True)
+    try:
+        cmd = "ps aux | grep chromedriver | grep -v grep | awk '{ print \"kill -9\", $2 }' | sh"
+        subprocess.run(cmd, shell=True)
+        cmd1 = "ps aux | grep 'Google Helper' | grep -v grep | awk '{ print \"kill -9\", $2 }' | sh"
+        subprocess.run(cmd1, shell=True)
+        cmd2 = "ps aux | grep 'Google Chrome' | grep -v grep | awk '{ print \"kill -9\", $2 }' | sh"
+        subprocess.run(cmd2, shell=True)
+    except:
+        pass
 
 
 class Spgirl_Auto:
@@ -579,10 +582,7 @@ if __name__ == '__main__':
 
 
     elif answer == "3":
-        try:
-            clear_driver()
-        except:
-            pass
+        clear_driver()
         slack_send = ""
         for user in users:
             # 念の為chromeを停止
