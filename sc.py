@@ -520,17 +520,26 @@ if __name__ == '__main__':
                 except Exception as e:
                     print(e)
 
-                # # 自動キテね
-                # try:
-                #     with open("log.txt", mode="a") as f:
-                #         f.write("%s\n" % user[0])
-                #     test.url_read_kitene()
-                # except Exception as e:
-                #     print("キテねに失敗しました")
-                #     print(e)
-                #     logs = f"log.txt"
-                #     with open(logs, mode="a") as f:
-                #         f.write("%s\n" % e)
+        time.sleep(3)
+        clear_driver()
+        for user in users:
+            clear_driver()
+
+            test = Spgirl_Auto(user[0], user[1])
+            clear_driver()
+            logs = f"log.txt"
+            with open(logs, mode="a") as f:
+                f.write("%s\n" % datetime.datetime.now())
+            try:
+                test.kitene_limit()
+                clear_driver()
+            except Exception as e:
+                print("キテねに失敗しました")
+                clear_driver()
+                print(e)
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % e)
+        clear_driver()
         time.sleep(3)
         # 確認
         slack_send = ""
