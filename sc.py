@@ -566,6 +566,12 @@ if __name__ == '__main__':
         # Slackに通知
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
+        # サーバーをシャットダウン
+        try:
+            cmd = 'shutdown -h now'
+            subprocess.run(cmd, shell=True)
+        except:
+            print("シャットダウン失敗しました")
 
     elif answer == "2":
         clear_driver()
@@ -642,6 +648,13 @@ if __name__ == '__main__':
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
         clear_driver()
+        # サーバーをシャットダウン
+        try:
+            cmd = 'shutdown -h now'
+            subprocess.run(cmd, shell=True)
+        except:
+            print("シャットダウン失敗しました")
+
     elif answer == "4":
         try:
             my_drop_box()
@@ -669,14 +682,13 @@ if __name__ == '__main__':
         except:
             print("失敗しました")
     elif answer == "7":
-        print("ドライバーを削除します")
+        # サーバーをシャットダウン
+        print("サーバーをシャットダウンします")
         try:
-            clear_driver()
-            print("消去しました。")
+            cmd = 'shutdown -h now'
+            subprocess.run(cmd, shell=True)
         except:
-            print("失敗しました")
-    else:
-        print("不正な入力です。")
+            print("シャットダウン失敗しました")
 
     # 時間を測る
     time_end = time.perf_counter()
