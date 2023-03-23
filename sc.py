@@ -568,7 +568,7 @@ if __name__ == '__main__':
         slack.notify(text=slack_send)
         # サーバーをシャットダウン
         try:
-            cmd = 'shutdown -h now'
+            cmd = 'sudo shutdown -h now'
             subprocess.run(cmd, shell=True)
         except:
             print("シャットダウン失敗しました")
@@ -650,7 +650,7 @@ if __name__ == '__main__':
         clear_driver()
         # サーバーをシャットダウン
         try:
-            cmd = 'shutdown -h now'
+            cmd = 'sudo shutdown -h now'
             subprocess.run(cmd, shell=True)
         except:
             print("シャットダウン失敗しました")
@@ -685,7 +685,7 @@ if __name__ == '__main__':
         # サーバーをシャットダウン
         print("サーバーをシャットダウンします")
         try:
-            cmd = 'shutdown -h now'
+            cmd = 'sudo shutdown -h now'
             subprocess.run(cmd, shell=True)
         except:
             print("シャットダウン失敗しました")
