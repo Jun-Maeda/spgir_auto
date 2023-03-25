@@ -81,6 +81,12 @@ def clear_driver():
     except:
         pass
 
+def time_count(start_time):
+    # 時間を測る
+    time_end = time.perf_counter()
+    tim = time_end - start_time
+    result_time = tim / 60
+    print(result_time)
 
 class Spgirl_Auto:
     def __init__(self, username, password):
@@ -566,6 +572,8 @@ if __name__ == '__main__':
         # Slackに通知
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
+        # 時間を出力
+        time_count(time_sta)
         # サーバーをシャットダウン
         try:
             cmd = 'sudo shutdown -h now'
@@ -648,6 +656,9 @@ if __name__ == '__main__':
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
         clear_driver()
+
+        # 時間を出力
+        time_count(time_sta)
         # サーバーをシャットダウン
         try:
             cmd = 'sudo shutdown -h now'
