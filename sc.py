@@ -838,8 +838,8 @@ if __name__ == '__main__':
                 print(e)
             slack_send += f"\n{check[0]}\n{sl}\n"
         # Slackに通知
-        # slack = slackweb.Slack(url=os.environ['SLACK'])
-        # slack.notify(text=slack_send)
+        slack = slackweb.Slack(url=os.environ['SLACK'])
+        slack.notify(text=slack_send)
         print(slack_send)
 
     # 時間を測る
