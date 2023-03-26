@@ -824,16 +824,14 @@ if __name__ == '__main__':
         # messagesからファイル名を取得
         m_list = os.listdir('messages')
         m_l = [m.rstrip(".txt") for m in m_list]
-        print(m_l)
         checks = []
         for u in users:
             if u[0] in m_l:
                 checks.append(u)
-        print(checks)
 
-        # checks = [["44275676", "43694369"], ["44275578", "016328"]]
         for check in checks:
             clear_driver()
+            print(check[0])
             test = Spgirl_Auto(check[0], check[1])
             clear_driver()
             try:
