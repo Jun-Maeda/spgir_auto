@@ -1,3 +1,3 @@
 cd /home/spgir_auto
 source venv/bin/activate
-echo 8 | python sc.py
+echo 8 | nohup python sc.py > main_logs/$(date "+%Y_%m_%d_%H_%M_%S").out &
