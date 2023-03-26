@@ -18,7 +18,6 @@ import subprocess
 import datetime
 import slackweb
 
-
 load_dotenv()
 
 
@@ -30,7 +29,7 @@ def my_driver():
     serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
-    options.headless = True
+    # options.headless = True
     # options.add_argument('--disable-gpu')
 
     # 画像非表示
@@ -550,7 +549,7 @@ class Spgirl_Auto:
                 # メッセージを送る処理
                 send = 0
                 miss = 0
-                message_path = f"logs/{self.username}/message.txt"
+                message_path = f"messages/{self.username}.txt"
                 with open(message_path, "r", encoding="utf-8") as f:
                     message = f.read()
                 message_lists = []
@@ -566,7 +565,15 @@ class Spgirl_Auto:
                         WebDriverWait(driver, 8).until(
                             EC.visibility_of_element_located((By.ID, "te_box"))
                         )
-                        driver.find_element(By.ID, value='te_box').send_keys(message)
+                        # 絵文字の対応
+                        INPUT_EMOJI = """
+                            arguments[0].value += arguments[1];
+                            arguments[0].dispatchEvent(new Event('change'));
+                            """
+                        element = driver.find_element(By.ID, value='te_box')
+                        driver.execute_script(INPUT_EMOJI, element, message)
+
+                        # driver.find_element(By.ID, value='te_box').send_keys(message)
                         time.sleep(1)
                         WebDriverWait(driver, 8).until(
                             EC.visibility_of_element_located((By.CLASS_NAME, "te_submit"))
@@ -847,4 +854,3 @@ if __name__ == '__main__':
     tim = time_end - time_sta
     result_time = tim / 60
     print(result_time)
-
