@@ -18,6 +18,7 @@ import subprocess
 import datetime
 import slackweb
 
+
 load_dotenv()
 
 
@@ -49,6 +50,13 @@ def my_driver():
 
 
 def my_drop_box():
+    # ローカルのメッセージを削除
+    try:
+        cmd = 'rm messages/*'
+        subprocess.run(cmd, shell=True)
+    except:
+        pass
+
     app_key = os.environ['KEY']
     app_secret = os.environ['PASS']
     token = os.environ['TOKEN']
@@ -66,6 +74,11 @@ def my_drop_box():
 
     drop2.files_download_to_file('account.txt', f'{today_path}account.txt')
 
+    for entry in drop.files_list_folder(f'{today_path}messages/').entries:
+        drop2.files_download_to_file(f'messages/{entry.name}', f'{today_path}messages/{entry.name}')
+
+    print("ダウンロードしました")
+
 
 # ドライバーを一旦すべて終了
 def clear_driver():
@@ -81,12 +94,14 @@ def clear_driver():
     except:
         pass
 
+
 def time_count(start_time):
     # 時間を測る
     time_end = time.perf_counter()
     tim = time_end - start_time
     result_time = tim / 60
     print(result_time)
+
 
 class Spgirl_Auto:
     def __init__(self, username, password):
@@ -482,6 +497,89 @@ class Spgirl_Auto:
         else:
             print("ログインできません")
 
+    # マイガールのフォローされている人でまたフォローを返していない人がいたらフォローする
+    def mygirl_follower(self):
+        return_log = ""
+        driver = self.login()
+        time.sleep(2)
+        # 認証コードを求められた場合
+        try:
+            auth = driver.find_element(By.CLASS_NAME, value='title-txt')
+            if auth.text == "認証コードを入力":
+                return_log += "\n認証コードが必要です"
+        except:
+            try:
+                # フォロー確認
+                my_follower = f"https://spgirl.cityheaven.net/J9FollowerList.php?gid={self.username}"
+                driver.get(my_follower)
+                WebDriverWait(driver, 8).until(
+                    EC.visibility_of_element_located((By.CLASS_NAME, "f_off"))
+                )
+                try:
+                    btns = driver.find_elements(By.CLASS_NAME, value='f_off')
+                    wait = WebDriverWait(driver=driver, timeout=8)
+                    wait.until(EC.presence_of_all_elements_located)
+                    did = 0
+                    miss = 0
+
+                    for btn in btns:
+                        try:
+                            # 対象のボタンが見えるまでスクロールする
+                            driver.execute_script('arguments[0].scrollIntoView(true);', btn)
+                            btn.click()
+                            time.sleep(1)
+                            did += 1
+                        except:
+                            miss += 1
+                    print(f"フォロー数:{did} 失敗数:{miss}回")
+                    return_log += f"\nフォロー数:{did} 失敗数:{miss}回"
+                except:
+                    return_log += f"\nフォローに失敗しました"
+
+            except:
+                return_log += "できるフォローがありませんでした"
+            try:
+                message_url = f"https://spgirl.cityheaven.net/J2OkiniTalkUserList.php?gid={self.username}"
+                driver.get(message_url)
+                WebDriverWait(driver, 8).until(
+                    EC.visibility_of_element_located((By.CLASS_NAME, "link_user"))
+                )
+                targets = driver.find_elements(By.CLASS_NAME, value='link_user')
+                time.sleep(3)
+
+                # メッセージを送る処理
+                send = 0
+                miss = 0
+                message_path = f"logs/{self.username}/message.txt"
+                with open(message_path, "r", encoding="utf-8") as f:
+                    message = f.read()
+                message_lists = []
+
+                for target in targets:
+                    target_txt = target.find_element(By.CLASS_NAME, value='talk_text').text
+                    # 一度も送ってない人のみ作業
+                    if target_txt == "":
+                        message_lists.append(target.get_attribute(name="href"))
+                for m_list in message_lists:
+                    try:
+                        driver.get(m_list)
+                        WebDriverWait(driver, 8).until(
+                            EC.visibility_of_element_located((By.ID, "te_box"))
+                        )
+                        driver.find_element(By.ID, value='te_box').send_keys(message)
+                        time.sleep(1)
+                        WebDriverWait(driver, 8).until(
+                            EC.visibility_of_element_located((By.CLASS_NAME, "te_submit"))
+                        )
+                        driver.find_element(By.CLASS_NAME, value="te_submit").click()
+                        send += 1
+                    except:
+                        miss += 1
+                return_log += f"\n{send}件送りました。{miss}件送れませんでした。"
+            except:
+                return_log += "\n送信対象がいませんでした。"
+        return return_log
+
 
 if __name__ == '__main__':
     start_desc = f"{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))}の実行"
@@ -492,7 +590,8 @@ if __name__ == '__main__':
     # 時間のカウント
     time_sta = time.perf_counter()
 
-    answer = input("[1]自動キテね実行 [2]残りのキテね確認 [3]マッチユーザーのみ [4]本日のファイルダウンロード [5]キテねリスト削除 [6]履歴削除")
+    answer = input(
+        "[1]自動キテね実行 [2]残りのキテね確認 [3]マッチユーザーのみ [4]本日のファイルダウンロード [5]キテねリスト削除 [6]履歴削除 [7]サーバシャットダウン [8]フォロー返し")
 
     # ユーザー情報の取り込み
     users = []
@@ -517,7 +616,6 @@ if __name__ == '__main__':
             else:
                 test = Spgirl_Auto(user[0], user[1])
                 clear_driver()
-
 
                 with open("log.txt", mode="a") as f:
                     f.write("%s\n" % user[0])
@@ -669,7 +767,6 @@ if __name__ == '__main__':
     elif answer == "4":
         try:
             my_drop_box()
-            print("ダウンロードしました")
         except Exception as e:
             print("ダウンロード失敗しました")
             print(e)
@@ -701,12 +798,53 @@ if __name__ == '__main__':
         except:
             print("シャットダウン失敗しました")
 
+    # マイガールのフォロー返しとメッセージ送信を行う
+    elif answer == "8":
+        clear_driver()
+        slack_send = ""
+
+        # ユーザー情報の取り込み
+        users = []
+        with open("account.txt", "r", encoding="utf-8") as f:
+            # リストとして読み込む
+            lines = f.readlines()
+
+        for line in lines:
+            li = line.strip('\n')
+            l = li.split(" ")
+            users.append(l)
+
+        # messagesからファイル名を取得
+        m_list = os.listdir('messages')
+        m_l = [m.rstrip(".txt") for m in m_list]
+        print(m_l)
+        checks = []
+        for u in users:
+            if u[0] in m_l:
+                checks.append(u)
+        print(checks)
+
+        # checks = [["44275676", "43694369"], ["44275578", "016328"]]
+        for check in checks:
+            clear_driver()
+            test = Spgirl_Auto(check[0], check[1])
+            clear_driver()
+            try:
+                sl = test.mygirl_follower()
+            except Exception as e:
+                sl = f"失敗しました"
+                clear_driver()
+                print(sl)
+                print(e)
+            slack_send += f"\n{check[0]}\n{sl}\n"
+        # Slackに通知
+        # slack = slackweb.Slack(url=os.environ['SLACK'])
+        # slack.notify(text=slack_send)
+        print(slack_send)
+
     # 時間を測る
     time_end = time.perf_counter()
     tim = time_end - time_sta
     result_time = tim / 60
     print(result_time)
 
-    with open("log.txt", mode="a") as f:
-        f.write("%s\n" % result_time)
-    clear_driver()
