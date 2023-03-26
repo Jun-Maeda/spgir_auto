@@ -29,7 +29,7 @@ def my_driver():
     serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
-    # options.headless = True
+    options.headless = True
     # options.add_argument('--disable-gpu')
 
     # 画像非表示
