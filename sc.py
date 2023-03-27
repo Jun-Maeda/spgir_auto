@@ -49,6 +49,7 @@ def my_driver():
 
 
 def my_drop_box():
+    inp = input("読み込むフォルダ名を入力してください")
     # ローカルのメッセージを削除
     try:
         cmd = 'rm messages/*'
@@ -66,7 +67,6 @@ def my_drop_box():
                            oauth2_refresh_token=token)
     drop2 = dropbox.Dropbox(app_key=app_key, app_secret=app_secret,
                             oauth2_refresh_token=token2)
-    inp = input("読み込むフォルダ名を入力してください")
     today_path = f'/heaven_auto/{inp}/'
     for entry in drop.files_list_folder(f'{today_path}urls').entries:
         drop2.files_download_to_file(f'urls/{entry.name}', f'{today_path}urls/{entry.name}')
