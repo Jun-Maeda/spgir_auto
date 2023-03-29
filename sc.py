@@ -73,10 +73,13 @@ def my_drop_box():
 
     drop2.files_download_to_file('account.txt', f'{today_path}account.txt')
 
-    for entry in drop.files_list_folder(f'{today_path}messages/').entries:
-        drop2.files_download_to_file(f'messages/{entry.name}', f'{today_path}messages/{entry.name}')
+    try:
+        for entry in drop.files_list_folder(f'{today_path}messages/').entries:
+            drop2.files_download_to_file(f'messages/{entry.name}', f'{today_path}messages/{entry.name}')
 
-    print("ダウンロードしました")
+        print("ダウンロードしました")
+    except:
+        print("ダウンロードしました(メッセージテンプレなし)")
 
 
 # ドライバーを一旦すべて終了
