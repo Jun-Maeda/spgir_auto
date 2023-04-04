@@ -682,12 +682,6 @@ if __name__ == '__main__':
         slack.notify(text=slack_send)
         # 時間を出力
         time_count(time_sta)
-        # サーバーをシャットダウン
-        try:
-            cmd = 'sudo shutdown -h now'
-            subprocess.run(cmd, shell=True)
-        except:
-            print("シャットダウン失敗しました")
 
         clear_driver()
         slack_send = ""
@@ -728,6 +722,13 @@ if __name__ == '__main__':
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
         print(slack_send)
+
+        # サーバーをシャットダウン
+        try:
+            cmd = 'sudo shutdown -h now'
+            subprocess.run(cmd, shell=True)
+        except:
+            print("シャットダウン失敗しました")
 
     elif answer == "2":
         clear_driver()
