@@ -689,6 +689,46 @@ if __name__ == '__main__':
         except:
             print("シャットダウン失敗しました")
 
+        clear_driver()
+        slack_send = ""
+
+        # ユーザー情報の取り込み
+        users = []
+        with open("account.txt", "r", encoding="utf-8") as f:
+            # リストとして読み込む
+            lines = f.readlines()
+
+        for line in lines:
+            li = line.strip('\n')
+            l = li.split(" ")
+            users.append(l)
+
+        # messagesからファイル名を取得
+        m_list = os.listdir('messages')
+        m_l = [m.rstrip(".txt") for m in m_list]
+        checks = []
+        for u in users:
+            if u[0] in m_l:
+                checks.append(u)
+
+        for check in checks:
+            clear_driver()
+            print(check[0])
+            test = Spgirl_Auto(check[0], check[1])
+            clear_driver()
+            try:
+                sl = test.mygirl_follower()
+            except Exception as e:
+                sl = f"失敗しました"
+                clear_driver()
+                print(sl)
+                print(e)
+            slack_send += f"\n{check[0]}\n{sl}\n"
+        # Slackに通知
+        slack = slackweb.Slack(url=os.environ['SLACK'])
+        slack.notify(text=slack_send)
+        print(slack_send)
+
     elif answer == "2":
         clear_driver()
         slack_send = ""
