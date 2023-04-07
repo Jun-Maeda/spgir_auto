@@ -17,8 +17,13 @@ from dotenv import load_dotenv
 import subprocess
 import datetime
 import slackweb
+import random
 
 load_dotenv()
+
+def my_time():
+    rand = random.randrange(4, 8, 1)
+    return time.sleep(rand)
 
 
 def my_driver():
@@ -29,7 +34,7 @@ def my_driver():
     serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
-    options.headless = True
+    # options.headless = True
     # options.add_argument('--disable-gpu')
 
     # 画像非表示
@@ -115,11 +120,11 @@ class Spgirl_Auto:
         url = "https://spgirl.cityheaven.net/J1Login.php"
         driver = my_driver()
         driver.get(url)
-        time.sleep(2)
+        my_time()
         driver.find_element(by=By.ID, value='userid').send_keys(self.username)
         driver.find_element(by=By.ID, value='passwd').send_keys(self.password)
         driver.find_element(by=By.ID, value='loginBtn').click()
-        time.sleep(2)
+        my_time()
         return driver
 
     # 残りのキテねの数のみ出力
@@ -141,7 +146,7 @@ class Spgirl_Auto:
         with open(logs, mode="a") as f:
             f.write("%s\n" % self.username)
         if login_check:
-            time.sleep(2)
+            my_time()
             # 認証コードを求められた場合
             try:
                 auth = driver.find_element(By.CLASS_NAME, value='title-txt')
@@ -177,7 +182,7 @@ class Spgirl_Auto:
         logs = f"log.txt"
         print(self.username)
         driver = self.login()
-        time.sleep(2)
+        my_time()
         try:
             # 認証コードを求められた場合
             try:
@@ -202,16 +207,16 @@ class Spgirl_Auto:
                         driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
                         WebDriverWait(driver, 90).until(
                             EC.visibility_of_element_located((By.CLASS_NAME, "kitene_btn")))
-                        time.sleep(8)
+                        my_time()
                         btns = driver.find_elements(By.CLASS_NAME, value='kitene_mada')
 
                         for i in range(int(many)):
                             # btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
                             driver.execute_script('arguments[0].scrollIntoView(true);', btns[i])
                             btns[i].click()
-                            time.sleep(2)
+                            my_time()
                             Alert(driver).accept()
-                            time.sleep(2)
+                            my_time()
                             print(f'{i + 1}回目キテねしました')
                         log = f"{many}回追加で実行しました"
                     except Exception as e:
@@ -296,11 +301,11 @@ class Spgirl_Auto:
         WebDriverWait(driver, 30).until(
             EC.visibility_of_element_located((By.ID, "login_header")))
         driver.find_element(By.ID, value='login_header').click()
+        my_time()
         driver.find_element(By.ID, value='user').send_keys(self.username)
         driver.find_element(By.ID, value='pass').send_keys(self.password)
-        time.sleep(1)
+        my_time()
         driver.find_element(By.ID, value='submitLogin').click()
-        time.sleep(1)
         print(self.username)
 
         wait = WebDriverWait(driver, 10)
@@ -329,6 +334,7 @@ class Spgirl_Auto:
                         pass
 
                     driver.get(f"{tar_url}reviews/?lo=1")
+                    my_time()
                     print(tar_url)
                     # 対象の口コミ一覧
                     my_url = str(driver.current_url)
@@ -338,6 +344,7 @@ class Spgirl_Auto:
                             wait.until(EC.alert_is_present())
                             alert = driver.switch_to.alert
                             # print(alert.text)
+                            my_time()
                             alert.accept()
                         except:
                             pass
@@ -352,7 +359,7 @@ class Spgirl_Auto:
                             now_url = driver.current_url
                             print(now_url)
                             my_log.append(now_url)
-                            time.sleep(2)
+                            my_time()
 
                             # 取得したURLをリストにする
                             for i in range(len(members)):
@@ -398,7 +405,9 @@ class Spgirl_Auto:
                                         WebDriverWait(driver, 20).until(
                                             EC.visibility_of_element_located((By.CLASS_NAME, "kitene_send")))
                                         kitene = driver.find_element(By.CLASS_NAME, value="kitene_send")
+                                        my_time()
                                         kitene.click()
+                                        my_time()
                                         Alert(driver).accept()
                                         print(f"キテネを押しました")
                                         my_log.append("キテねを押しました")
@@ -451,7 +460,7 @@ class Spgirl_Auto:
                         try:
                             if driver.current_url == 'data:,':
                                 driver.forward()
-                            time.sleep(3)
+                            my_time()
                             driver.get(my_url)
                             print(driver.current_url)
                             my_log.append(driver.current_url)
@@ -503,7 +512,7 @@ class Spgirl_Auto:
     def mygirl_follower(self):
         return_log = ""
         driver = self.login()
-        time.sleep(2)
+        my_time()
         # 認証コードを求められた場合
         try:
             auth = driver.find_element(By.CLASS_NAME, value='title-txt')
@@ -521,6 +530,7 @@ class Spgirl_Auto:
                     btns = driver.find_elements(By.CLASS_NAME, value='f_off')
                     wait = WebDriverWait(driver=driver, timeout=8)
                     wait.until(EC.presence_of_all_elements_located)
+                    my_time()
                     did = 0
                     miss = 0
 
@@ -529,7 +539,7 @@ class Spgirl_Auto:
                             # 対象のボタンが見えるまでスクロールする
                             driver.execute_script('arguments[0].scrollIntoView(true);', btn)
                             btn.click()
-                            time.sleep(1)
+                            my_time()
                             did += 1
                         except:
                             miss += 1
@@ -547,7 +557,7 @@ class Spgirl_Auto:
                     EC.visibility_of_element_located((By.CLASS_NAME, "link_user"))
                 )
                 targets = driver.find_elements(By.CLASS_NAME, value='link_user')
-                time.sleep(3)
+                my_time()
 
                 # メッセージを送る処理
                 send = 0
@@ -568,6 +578,7 @@ class Spgirl_Auto:
                         WebDriverWait(driver, 8).until(
                             EC.visibility_of_element_located((By.ID, "te_box"))
                         )
+                        my_time()
                         # 絵文字の対応
                         INPUT_EMOJI = """
                             arguments[0].value += arguments[1];
@@ -577,11 +588,12 @@ class Spgirl_Auto:
                         driver.execute_script(INPUT_EMOJI, element, message)
 
                         # driver.find_element(By.ID, value='te_box').send_keys(message)
-                        time.sleep(1)
+                        my_time()
                         WebDriverWait(driver, 8).until(
                             EC.visibility_of_element_located((By.CLASS_NAME, "te_submit"))
                         )
                         driver.find_element(By.CLASS_NAME, value="te_submit").click()
+                        my_time()
                         send += 1
                     except:
                         miss += 1
@@ -890,6 +902,8 @@ if __name__ == '__main__':
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
         print(slack_send)
+    elif answer == "9":
+        my_time()
 
     # 時間を測る
     time_end = time.perf_counter()
