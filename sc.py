@@ -297,6 +297,7 @@ class Spgirl_Auto:
         driver = my_driver()
         driver.get(f"{targets[0][3:]}reviews/?lo=1")
         driver.implicitly_wait(10)
+        my_time()
         driver.execute_script("window.scrollTo(0, 0)")
         WebDriverWait(driver, 30).until(
             EC.visibility_of_element_located((By.ID, "login_header")))
@@ -645,8 +646,9 @@ if __name__ == '__main__':
                     test.url_read_kitene()
                 except Exception as e:
                     print(e)
+                my_time()
 
-        time.sleep(3)
+        my_time()
         clear_driver()
         for user in users:
             clear_driver()
@@ -665,8 +667,9 @@ if __name__ == '__main__':
                 print(e)
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
+            my_time()
         clear_driver()
-        time.sleep(3)
+        my_time()
         # 確認
         slack_send = ""
         for user in users:
@@ -729,6 +732,7 @@ if __name__ == '__main__':
                 clear_driver()
                 print(sl)
                 print(e)
+            my_time()
             slack_send += f"\n{check[0]}\n{sl}\n"
         # Slackに通知
         slack = slackweb.Slack(url=os.environ['SLACK'])
