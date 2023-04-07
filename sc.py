@@ -22,7 +22,7 @@ import random
 load_dotenv()
 
 def my_time():
-    rand = random.randrange(4, 8, 1)
+    rand = random.randrange(3, 7, 1)
     return time.sleep(rand)
 
 
@@ -34,7 +34,7 @@ def my_driver():
     serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
-    # options.headless = True
+    options.headless = True
     # options.add_argument('--disable-gpu')
 
     # 画像非表示
