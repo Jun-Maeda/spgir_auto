@@ -206,13 +206,20 @@ class Spgirl_Auto:
                         c_text = driver.find_element(By.CLASS_NAME, value='kitene_count').text
                         many = re.findall(r'キテネ残り回数：(\w+)回', c_text)[0]
                         print(many)
-                        driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                        WebDriverWait(driver, 90).until(
-                            EC.visibility_of_element_located((By.CLASS_NAME, "kitene_mada")))
-                        time.sleep(7)
+                        try:
+                            driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
+                            WebDriverWait(driver, 60).until(
+                                EC.visibility_of_element_located((By.CLASS_NAME, "kitene_mada")))
+                        except:
+                            # うまく読み込めなかった場合にもう一度実行
+                            driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
+                            WebDriverWait(driver, 60).until(
+                                EC.visibility_of_element_located((By.CLASS_NAME, "kitene_mada")))
+                        time.sleep(10)
                         btns = driver.find_elements(By.CLASS_NAME, value='kitene_mada')
 
                         for i in range(int(many)):
+                            my_time()
                             # btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
                             driver.execute_script('arguments[0].scrollIntoView(true);', btns[i])
                             btns[i].click()
@@ -704,42 +711,44 @@ if __name__ == '__main__':
 
         # ユーザー情報の取り込み
         users = []
-        with open("account.txt", "r", encoding="utf-8") as f:
-            # リストとして読み込む
-            lines = f.readlines()
+        try:
+            with open("account.txt", "r", encoding="utf-8") as f:
+                # リストとして読み込む
+                lines = f.readlines()
 
-        for line in lines:
-            li = line.strip('\n')
-            l = li.split(" ")
-            users.append(l)
+            for line in lines:
+                li = line.strip('\n')
+                l = li.split(" ")
+                users.append(l)
 
-        # messagesからファイル名を取得
-        m_list = os.listdir('messages')
-        m_l = [m.rstrip(".txt") for m in m_list]
-        checks = []
-        for u in users:
-            if u[0] in m_l:
-                checks.append(u)
+            # messagesからファイル名を取得
+            m_list = os.listdir('messages')
+            m_l = [m.rstrip(".txt") for m in m_list]
+            checks = []
+            for u in users:
+                if u[0] in m_l:
+                    checks.append(u)
 
-        for check in checks:
-            clear_driver()
-            print(check[0])
-            test = Spgirl_Auto(check[0], check[1])
-            clear_driver()
-            try:
-                sl = test.mygirl_follower()
-            except Exception as e:
-                sl = f"失敗しました"
+            for check in checks:
                 clear_driver()
-                print(sl)
-                print(e)
-            my_time()
-            slack_send += f"\n{check[0]}\n{sl}\n"
-        # Slackに通知
-        slack = slackweb.Slack(url=os.environ['SLACK'])
-        slack.notify(text=slack_send)
-        print(slack_send)
-
+                print(check[0])
+                test = Spgirl_Auto(check[0], check[1])
+                clear_driver()
+                try:
+                    sl = test.mygirl_follower()
+                except Exception as e:
+                    sl = f"失敗しました"
+                    clear_driver()
+                    print(sl)
+                    print(e)
+                my_time()
+                slack_send += f"\n{check[0]}\n{sl}\n"
+            # Slackに通知
+            slack = slackweb.Slack(url=os.environ['SLACK'])
+            slack.notify(text=slack_send)
+            print(slack_send)
+        except:
+            print("フォロー返しなしです。")
         # サーバーをシャットダウン
         try:
             cmd = 'sudo shutdown -h now'
