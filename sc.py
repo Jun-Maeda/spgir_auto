@@ -241,7 +241,6 @@ class Spgirl_Auto:
     def myshops(self):
         # URLにアクセス
         # url = self.mypage()
-        # ToDo:個人のURLを保管する場所作る
         url = "https://www.cityheaven.net/tokyo/A1304/A130401/fullco/girlid-44275681/?mypage_flg=1"
         driver = my_driver()
         wait = WebDriverWait(driver=driver, timeout=60)
@@ -311,7 +310,7 @@ class Spgirl_Auto:
         driver.find_element(By.ID, value='submitLogin').click()
         print(self.username)
 
-        wait = WebDriverWait(driver, 10)
+        wait = WebDriverWait(driver, 30)
         check = True
         try:
             driver.find_element(By.ID, value='login_header')
@@ -354,7 +353,7 @@ class Spgirl_Auto:
 
                         # 表示されたページのメンバーのURLを取得
                         try:
-                            WebDriverWait(driver, 10).until(
+                            WebDriverWait(driver, 30).until(
                                 EC.visibility_of_element_located((By.CLASS_NAME, "review-item-shopnameButton")))
                             members = driver.find_elements(By.CLASS_NAME, value='review-item-shopnameButton')
                             ac_url = []
@@ -405,7 +404,7 @@ class Spgirl_Auto:
                                         # wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "kitene_send")))
 
                                         # driver.save_screenshot("スクショ.img")
-                                        WebDriverWait(driver, 20).until(
+                                        WebDriverWait(driver, 30).until(
                                             EC.visibility_of_element_located((By.CLASS_NAME, "kitene_send")))
                                         kitene = driver.find_element(By.CLASS_NAME, value="kitene_send")
                                         my_time()
