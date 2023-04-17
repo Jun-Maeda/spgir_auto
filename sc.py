@@ -983,14 +983,12 @@ if __name__ == '__main__':
         except:
             print("シャットダウン失敗しました")
     elif answer == "9":
-        my_time()
-
-    elif answer == "a":
-        today_drop_box()
-    elif answer == "b":
         slack_send = "テスト"
         slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
+
+    elif answer == "a":
+        today_drop_box()
 
     # 時間を測る
     time_end = time.perf_counter()
