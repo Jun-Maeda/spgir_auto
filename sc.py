@@ -88,6 +88,67 @@ def my_drop_box():
     except:
         print("ダウンロードしました(メッセージテンプレなし)")
 
+def today_drop_box():
+    today = datetime.date.today().strftime('%Y%m%d')
+    inp = today
+    # ローカルのメッセージを削除
+    try:
+        cmd = 'rm messages/*'
+        subprocess.run(cmd, shell=True)
+    except:
+        pass
+        # ローカルのリセットテキストを削除
+        try:
+            cmd = 'rm reset.txt'
+            subprocess.run(cmd, shell=True)
+        except:
+            pass
+
+    app_key = os.environ['KEY']
+    app_secret = os.environ['PASS']
+    token = os.environ['TOKEN']
+    token2 = os.environ['TOKEN2']
+
+    # 内容確認
+    drop = dropbox.Dropbox(app_key=app_key, app_secret=app_secret,
+                           oauth2_refresh_token=token)
+    drop2 = dropbox.Dropbox(app_key=app_key, app_secret=app_secret,
+                            oauth2_refresh_token=token2)
+    try:
+        try:
+            # 通常の場合
+            today_path = f'/heaven_auto/{inp}/'
+            for entry in drop.files_list_folder(f'{today_path}urls').entries:
+                drop2.files_download_to_file(f'urls/{entry.name}', f'{today_path}urls/{entry.name}')
+
+            drop2.files_download_to_file('account.txt', f'{today_path}account.txt')
+            drop2.files_download_to_file('account2.txt', f'{today_path}account2.txt')
+        except:
+            # resetの場合
+            today_path = f'/heaven_auto/{inp}reset/'
+            for entry in drop.files_list_folder(f'{today_path}urls').entries:
+                drop2.files_download_to_file(f'urls/{entry.name}', f'{today_path}urls/{entry.name}')
+
+            drop2.files_download_to_file('account2.txt', f'{today_path}account2.txt')
+            print("キテねリストを消去します")
+            try:
+                cmd = 'rm logs/*/follows.txt'
+                subprocess.run(cmd, shell=True)
+                print("消去しました。")
+            except:
+                print("失敗しました")
+
+
+        try:
+            for entry in drop.files_list_folder(f'{today_path}messages/').entries:
+                drop2.files_download_to_file(f'messages/{entry.name}', f'{today_path}messages/{entry.name}')
+
+            print("ダウンロードしました")
+        except:
+            print("ダウンロードしました(メッセージテンプレなし)")
+    except:
+        print("ファイルがありませんでした")
+
 
 # ドライバーを一旦すべて終了
 def clear_driver():
@@ -707,12 +768,13 @@ if __name__ == '__main__':
         time_count(time_sta)
 
         clear_driver()
-        slack_send = ""
 
+        # フォロー返し
+        slack_send = ""
         # ユーザー情報の取り込み
         users = []
         try:
-            with open("account.txt", "r", encoding="utf-8") as f:
+            with open("account2.txt", "r", encoding="utf-8") as f:
                 # リストとして読み込む
                 lines = f.readlines()
 
@@ -721,15 +783,7 @@ if __name__ == '__main__':
                 l = li.split(" ")
                 users.append(l)
 
-            # messagesからファイル名を取得
-            m_list = os.listdir('messages')
-            m_l = [m.rstrip(".txt") for m in m_list]
-            checks = []
-            for u in users:
-                if u[0] in m_l:
-                    checks.append(u)
-
-            for check in checks:
+            for check in users:
                 clear_driver()
                 print(check[0])
                 test = Spgirl_Auto(check[0], check[1])
@@ -879,45 +933,49 @@ if __name__ == '__main__':
     elif answer == "8":
         clear_driver()
         slack_send = ""
-
         # ユーザー情報の取り込み
         users = []
-        with open("account.txt", "r", encoding="utf-8") as f:
-            # リストとして読み込む
-            lines = f.readlines()
+        try:
+            with open("account2.txt", "r", encoding="utf-8") as f:
+                # リストとして読み込む
+                lines = f.readlines()
 
-        for line in lines:
-            li = line.strip('\n')
-            l = li.split(" ")
-            users.append(l)
+            for line in lines:
+                li = line.strip('\n')
+                l = li.split(" ")
+                users.append(l)
 
-        # messagesからファイル名を取得
-        m_list = os.listdir('messages')
-        m_l = [m.rstrip(".txt") for m in m_list]
-        checks = []
-        for u in users:
-            if u[0] in m_l:
-                checks.append(u)
-
-        for check in checks:
-            clear_driver()
-            print(check[0])
-            test = Spgirl_Auto(check[0], check[1])
-            clear_driver()
-            try:
-                sl = test.mygirl_follower()
-            except Exception as e:
-                sl = f"失敗しました"
+            for check in users:
                 clear_driver()
-                print(sl)
-                print(e)
-            slack_send += f"\n{check[0]}\n{sl}\n"
-        # Slackに通知
-        slack = slackweb.Slack(url=os.environ['SLACK'])
-        slack.notify(text=slack_send)
-        print(slack_send)
+                print(check[0])
+                test = Spgirl_Auto(check[0], check[1])
+                clear_driver()
+                try:
+                    sl = test.mygirl_follower()
+                except Exception as e:
+                    sl = f"失敗しました"
+                    clear_driver()
+                    print(sl)
+                    print(e)
+                my_time()
+                slack_send += f"\n{check[0]}\n{sl}\n"
+            # Slackに通知
+            slack = slackweb.Slack(url=os.environ['SLACK'])
+            slack.notify(text=slack_send)
+            print(slack_send)
+        except:
+            print("フォロー返しなしです。")
+        # サーバーをシャットダウン
+        try:
+            cmd = 'sudo shutdown -h now'
+            subprocess.run(cmd, shell=True)
+        except:
+            print("シャットダウン失敗しました")
     elif answer == "9":
         my_time()
+
+    elif answer == "a":
+        today_drop_box()
 
     # 時間を測る
     time_end = time.perf_counter()
