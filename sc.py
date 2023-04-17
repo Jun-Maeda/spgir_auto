@@ -808,12 +808,12 @@ if __name__ == '__main__':
                 print(slack_send)
             except:
                 print("フォロー返しなしです。")
-            # サーバーをシャットダウン
-            try:
-                cmd = 'sudo shutdown -h now'
-                subprocess.run(cmd, shell=True)
-            except:
-                print("シャットダウン失敗しました")
+            # # サーバーをシャットダウン
+            # try:
+            #     cmd = 'sudo shutdown -h now'
+            #     subprocess.run(cmd, shell=True)
+            # except:
+            #     print("シャットダウン失敗しました")
         else:
             # Slackに通知
             slack_send = "本日のファイル取得できませんでした"
