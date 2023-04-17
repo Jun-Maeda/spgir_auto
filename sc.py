@@ -987,6 +987,10 @@ if __name__ == '__main__':
 
     elif answer == "a":
         today_drop_box()
+    elif answer == "b":
+        slack_send = "テスト"
+        slack = slackweb.Slack(url=os.environ['SLACK'])
+        slack.notify(text=slack_send)
 
     # 時間を測る
     time_end = time.perf_counter()
