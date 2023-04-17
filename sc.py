@@ -144,10 +144,13 @@ def today_drop_box():
                 drop2.files_download_to_file(f'messages/{entry.name}', f'{today_path}messages/{entry.name}')
 
             print("ダウンロードしました")
+            return True
         except:
             print("ダウンロードしました(メッセージテンプレなし)")
+            return True
     except:
         print("ファイルがありませんでした")
+        return False
 
 
 # ドライバーを一旦すべて終了
@@ -698,117 +701,125 @@ if __name__ == '__main__':
 
     if answer == "1":
         clear_driver()
-        for user in users:
-            clear_driver()
-            text_file = f"urls/{user[0]}.txt"
+        drop = today_drop_box()
+        if drop:
+            for user in users:
+                clear_driver()
+                text_file = f"urls/{user[0]}.txt"
 
-            # ファイルがなかったら終了
-            if not os.path.isfile(text_file):
-                print("URLファイルがありません")
-            else:
+                # ファイルがなかったら終了
+                if not os.path.isfile(text_file):
+                    print("URLファイルがありません")
+                else:
+                    test = Spgirl_Auto(user[0], user[1])
+                    clear_driver()
+
+                    with open("log.txt", mode="a") as f:
+                        f.write("%s\n" % user[0])
+                    try:
+                        test.url_read_kitene()
+                    except Exception as e:
+                        print(e)
+                    my_time()
+
+            my_time()
+            clear_driver()
+            for user in users:
+                clear_driver()
+
                 test = Spgirl_Auto(user[0], user[1])
                 clear_driver()
-
-                with open("log.txt", mode="a") as f:
-                    f.write("%s\n" % user[0])
-                try:
-                    test.url_read_kitene()
-                except Exception as e:
-                    print(e)
-                my_time()
-
-        my_time()
-        clear_driver()
-        for user in users:
-            clear_driver()
-
-            test = Spgirl_Auto(user[0], user[1])
-            clear_driver()
-            logs = f"log.txt"
-            with open(logs, mode="a") as f:
-                f.write("%s\n" % datetime.datetime.now())
-            try:
-                test.kitene_limit()
-                clear_driver()
-            except Exception as e:
-                print("キテねに失敗しました")
-                clear_driver()
-                print(e)
-                with open(logs, mode="a") as f:
-                    f.write("%s\n" % e)
-            my_time()
-        clear_driver()
-        my_time()
-        # 確認
-        slack_send = ""
-        for user in users:
-            # 念の為chromeを停止
-            # cmd = 'killall chrome'
-            # subprocess.run(cmd, shell=True)
-            clear_driver()
-
-            test = Spgirl_Auto(user[0], user[1])
-            clear_driver()
-            try:
-                sl = test.kitene_confirm()
-                clear_driver()
-            except Exception as e:
-                sl = "キテねの確認に失敗しました"
-                clear_driver()
-                print(sl)
-                print(e)
                 logs = f"log.txt"
                 with open(logs, mode="a") as f:
-                    f.write("%s\n" % e)
-            slack_send += f"\n{user[0]}\n{sl}\n"
-        # Slackに通知
-        slack = slackweb.Slack(url=os.environ['SLACK'])
-        slack.notify(text=slack_send)
-        # 時間を出力
-        time_count(time_sta)
-
-        clear_driver()
-
-        # フォロー返し
-        slack_send = ""
-        # ユーザー情報の取り込み
-        users = []
-        try:
-            with open("account2.txt", "r", encoding="utf-8") as f:
-                # リストとして読み込む
-                lines = f.readlines()
-
-            for line in lines:
-                li = line.strip('\n')
-                l = li.split(" ")
-                users.append(l)
-
-            for check in users:
+                    f.write("%s\n" % datetime.datetime.now())
+                try:
+                    test.kitene_limit()
+                    clear_driver()
+                except Exception as e:
+                    print("キテねに失敗しました")
+                    clear_driver()
+                    print(e)
+                    with open(logs, mode="a") as f:
+                        f.write("%s\n" % e)
+                my_time()
+            clear_driver()
+            my_time()
+            # 確認
+            slack_send = ""
+            for user in users:
+                # 念の為chromeを停止
+                # cmd = 'killall chrome'
+                # subprocess.run(cmd, shell=True)
                 clear_driver()
-                print(check[0])
-                test = Spgirl_Auto(check[0], check[1])
+
+                test = Spgirl_Auto(user[0], user[1])
                 clear_driver()
                 try:
-                    sl = test.mygirl_follower()
+                    sl = test.kitene_confirm()
+                    clear_driver()
                 except Exception as e:
-                    sl = f"失敗しました"
+                    sl = "キテねの確認に失敗しました"
                     clear_driver()
                     print(sl)
                     print(e)
-                my_time()
-                slack_send += f"\n{check[0]}\n{sl}\n"
+                    logs = f"log.txt"
+                    with open(logs, mode="a") as f:
+                        f.write("%s\n" % e)
+                slack_send += f"\n{user[0]}\n{sl}\n"
             # Slackに通知
             slack = slackweb.Slack(url=os.environ['SLACK'])
             slack.notify(text=slack_send)
+            # 時間を出力
+            time_count(time_sta)
+
+            clear_driver()
+
+            # フォロー返し
+            slack_send = ""
+            # ユーザー情報の取り込み
+            users = []
+            try:
+                with open("account2.txt", "r", encoding="utf-8") as f:
+                    # リストとして読み込む
+                    lines = f.readlines()
+
+                for line in lines:
+                    li = line.strip('\n')
+                    l = li.split(" ")
+                    users.append(l)
+
+                for check in users:
+                    clear_driver()
+                    print(check[0])
+                    test = Spgirl_Auto(check[0], check[1])
+                    clear_driver()
+                    try:
+                        sl = test.mygirl_follower()
+                    except Exception as e:
+                        sl = f"失敗しました"
+                        clear_driver()
+                        print(sl)
+                        print(e)
+                    my_time()
+                    slack_send += f"\n{check[0]}\n{sl}\n"
+                # Slackに通知
+                slack = slackweb.Slack(url=os.environ['SLACK'])
+                slack.notify(text=slack_send)
+                print(slack_send)
+            except:
+                print("フォロー返しなしです。")
+            # サーバーをシャットダウン
+            try:
+                cmd = 'sudo shutdown -h now'
+                subprocess.run(cmd, shell=True)
+            except:
+                print("シャットダウン失敗しました")
+        else:
+            # Slackに通知
+            slack_send = "本日のファイル取得できませんでした"
             print(slack_send)
-        except:
-            print("フォロー返しなしです。")
-        # サーバーをシャットダウン
-        try:
-            cmd = 'sudo shutdown -h now'
-            subprocess.run(cmd, shell=True)
-        except:
-            print("シャットダウン失敗しました")
+            slack = slackweb.Slack(url=os.environ['SLACK'])
+            slack.notify(text=slack_send)
 
     elif answer == "2":
         clear_driver()
