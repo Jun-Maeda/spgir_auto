@@ -703,6 +703,10 @@ if __name__ == '__main__':
         clear_driver()
         drop = today_drop_box()
         if drop:
+            slack_send = "自動実行開始"
+            print(slack_send)
+            slack = slackweb.Slack(url=os.environ['SLACK'])
+            slack.notify(text=slack_send)
             for user in users:
                 clear_driver()
                 text_file = f"urls/{user[0]}.txt"
