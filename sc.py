@@ -824,6 +824,12 @@ if __name__ == '__main__':
             print(slack_send)
             slack = slackweb.Slack(url=os.environ['SLACK'])
             slack.notify(text=slack_send)
+             # サーバーをシャットダウン
+            try:
+                cmd = 'sudo shutdown -h now'
+                subprocess.run(cmd, shell=True)
+            except:
+                print("シャットダウン失敗しました")
 
             # サーバーをシャットダウン
             try:
