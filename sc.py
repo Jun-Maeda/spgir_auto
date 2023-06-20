@@ -34,7 +34,7 @@ def my_driver():
     serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
-    options.headless = True
+    # options.headless = True
     # options.add_argument('--disable-gpu')
     # シークレットモード
     options.add_argument('--incognito')
@@ -720,6 +720,7 @@ if __name__ == '__main__':
 
                     with open("log.txt", mode="a") as f:
                         f.write("%s\n" % user[0])
+                    subprocess.run("echo pure2juntan | sudo -S chmod -R 777 urls", shell=True)
                     try:
                         test.url_read_kitene()
                     except Exception as e:
