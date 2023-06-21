@@ -370,11 +370,11 @@ class Spgirl_Auto:
         driver = my_driver()
         driver.get(f"{targets[0][3:]}reviews/?lo=1")
         driver.implicitly_wait(10)
-        print("1")
         my_time()
         driver.execute_script("window.scrollTo(0, 0)")
-        WebDriverWait(driver, 20).until(
+        WebDriverWait(driver, 40).until(
             EC.visibility_of_element_located((By.ID, "login_header")))
+        print("1")
         driver.find_element(By.ID, value='login_header').click()
         my_time()
         print("2")
