@@ -37,13 +37,13 @@ def my_driver():
     options.headless = True
     # options.add_argument('--disable-gpu')
     # シークレットモード
-    # options.add_argument('--incognito')
+    options.add_argument('--incognito')
 
     # 画像非表示
-    options.add_argument('--blink-settings=imagesEnabled=false')
+    # options.add_argument('--blink-settings=imagesEnabled=false')
 
     # セキュリティ対策などのchromeに搭載してある保護機能をオフにする。
-    options.add_argument("--no-sandbox")
+    # options.add_argument("--no-sandbox")
     # ディスクのメモリスペースを使う。
     options.add_argument('--disable-dev-shm-usage')
     # リモートデバッグフラグを立てる。
@@ -372,7 +372,7 @@ class Spgirl_Auto:
         driver.execute_script("window.scrollTo(0, 0)")
 
         # スクリーンショットを取得
-        driver.save_screenshot('result.png')
+        # driver.save_screenshot('result.png')
 
 
         WebDriverWait(driver, 30).until(
