@@ -370,8 +370,17 @@ class Spgirl_Auto:
         driver = my_driver()
         driver.get(f"{targets[0][3:]}reviews/?lo=1")
         driver.implicitly_wait(10)
-        time.sleep(10)
         driver.execute_script("window.scrollTo(0, 0)")
+
+        # 保存する画像ファイル名
+        fname = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+        # スクショ保存ディレクトリが存在しなければ生成
+        if os.path.isdir(os.getcwd() + "\\ss") == False:
+            os.mkdir(os.getcwd() + "\\ss")
+        # スクショをPNG形式で保存
+        driver.get_screenshot_as_file(os.getcwd() + "\\ss\\" + fname + ".png")
+
+
         WebDriverWait(driver, 30).until(
             EC.visibility_of_element_located((By.ID, "login_header")))
         print("1")
