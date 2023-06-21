@@ -35,15 +35,15 @@ def my_driver():
 
     # ヘッドレスモード
     options.headless = True
-    # options.add_argument('--disable-gpu')
+    options.add_argument('--disable-gpu')
     # シークレットモード
     options.add_argument('--incognito')
 
     # 画像非表示
-    # options.add_argument('--blink-settings=imagesEnabled=false')
+    options.add_argument('--blink-settings=imagesEnabled=false')
 
     # セキュリティ対策などのchromeに搭載してある保護機能をオフにする。
-    # options.add_argument("--no-sandbox")
+    options.add_argument("--no-sandbox")
     # ディスクのメモリスペースを使う。
     options.add_argument('--disable-dev-shm-usage')
     # リモートデバッグフラグを立てる。
