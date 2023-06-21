@@ -22,7 +22,8 @@ import random
 load_dotenv()
 
 def my_time():
-    rand = random.randrange(3, 7, 1)
+    # rand = random.randrange(3, 7, 1)
+    rand = 5
     return time.sleep(rand)
 
 
