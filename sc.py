@@ -371,7 +371,7 @@ class Spgirl_Auto:
         driver.implicitly_wait(10)
         my_time()
         driver.execute_script("window.scrollTo(0, 0)")
-        WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, 20).until(
             EC.visibility_of_element_located((By.ID, "login_header")))
         driver.find_element(By.ID, value='login_header').click()
         my_time()
