@@ -372,13 +372,8 @@ class Spgirl_Auto:
         driver.implicitly_wait(10)
         driver.execute_script("window.scrollTo(0, 0)")
 
-        # 保存する画像ファイル名
-        fname = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-        # スクショ保存ディレクトリが存在しなければ生成
-        if os.path.isdir(os.getcwd() + "\\ss") == False:
-            os.mkdir(os.getcwd() + "\\ss")
-        # スクショをPNG形式で保存
-        driver.get_screenshot_as_file(os.getcwd() + "\\ss\\" + fname + ".png")
+        # スクリーンショットを取得
+        driver.save_screenshot('result.png')
 
 
         WebDriverWait(driver, 30).until(
