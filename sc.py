@@ -22,8 +22,7 @@ import random
 load_dotenv()
 
 def my_time():
-    # rand = random.randrange(3, 7, 1)
-    rand = 5
+    rand = random.randrange(3, 7, 1)
     return time.sleep(rand)
 
 
@@ -373,15 +372,13 @@ class Spgirl_Auto:
         driver.execute_script("window.scrollTo(0, 0)")
 
         # スクリーンショットを取得
-        driver.save_screenshot('result.png')
+        # driver.save_screenshot('result.png')
 
 
         WebDriverWait(driver, 30).until(
             EC.visibility_of_element_located((By.ID, "login_header")))
-        print("1")
         driver.find_element(By.ID, value='login_header').click()
         my_time()
-        print("2")
         driver.find_element(By.ID, value='user').send_keys(self.username)
         driver.find_element(By.ID, value='pass').send_keys(self.password)
         my_time()
