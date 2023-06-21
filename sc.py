@@ -38,7 +38,7 @@ def my_driver():
     options.headless = True
     # options.add_argument('--disable-gpu')
     # シークレットモード
-    options.add_argument('--incognito')
+    # options.add_argument('--incognito')
 
     # 画像非表示
     options.add_argument('--blink-settings=imagesEnabled=false')
@@ -373,7 +373,7 @@ class Spgirl_Auto:
         driver.execute_script("window.scrollTo(0, 0)")
 
         # スクリーンショットを取得
-        driver.save_screenshot('result.png')
+        # driver.save_screenshot('result.png')
 
 
         WebDriverWait(driver, 30).until(
@@ -951,7 +951,7 @@ if __name__ == '__main__':
         print("履歴を消去します")
         try:
             # cmd = 'rm logs/*/log.txt'
-            cmd = 'rm main_logs/*'
+            cmd = 'rm -y main_logs/*'
             subprocess.run(cmd, shell=True)
             print("消去しました。")
         except:
