@@ -373,7 +373,7 @@ class Spgirl_Auto:
         driver.execute_script("window.scrollTo(0, 0)")
 
         # スクリーンショットを取得
-        # driver.save_screenshot('result.png')
+        driver.save_screenshot('result.png')
 
 
         WebDriverWait(driver, 30).until(
