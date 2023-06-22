@@ -705,8 +705,7 @@ if __name__ == '__main__':
 
     if answer == "1":
         clear_driver()
-        # drop = today_drop_box()
-        drop = True
+        drop = today_drop_box()
         if drop:
             slack_send = "自動実行開始"
             print(slack_send)
