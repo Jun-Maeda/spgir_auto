@@ -35,7 +35,7 @@ def my_driver():
 
     # ヘッドレスモード
     options.headless = True
-    options.add_argument('--disable-gpu')
+    # options.add_argument('--disable-gpu')
     # シークレットモード
     options.add_argument('--incognito')
 
@@ -705,7 +705,8 @@ if __name__ == '__main__':
 
     if answer == "1":
         clear_driver()
-        drop = today_drop_box()
+        # drop = today_drop_box()
+        drop = True
         if drop:
             slack_send = "自動実行開始"
             print(slack_send)
