@@ -272,15 +272,16 @@ class Spgirl_Auto:
                         print(many)
                         try:
                             driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                            WebDriverWait(driver, 60).until(
+                            WebDriverWait(driver, 10).until(
                                 EC.visibility_of_element_located((By.CLASS_NAME, "kitene_mada")))
                         except:
                             # うまく読み込めなかった場合にもう一度実行
                             driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                            WebDriverWait(driver, 60).until(
+                            WebDriverWait(driver, 10).until(
                                 EC.visibility_of_element_located((By.CLASS_NAME, "kitene_mada")))
                         time.sleep(5)
                         btns = driver.find_elements(By.CLASS_NAME, value='kitene_mada')
+                        time.sleep(5)
                         print(btns)
 
                         for i in range(int(many)):
