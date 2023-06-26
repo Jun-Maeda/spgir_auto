@@ -40,7 +40,7 @@ def my_driver():
     options.add_argument('--incognito')
 
     # 画像非表示
-    options.add_argument('--blink-settings=imagesEnabled=false')
+    # options.add_argument('--blink-settings=imagesEnabled=false')
 
     # セキュリティ対策などのchromeに搭載してある保護機能をオフにする。
     options.add_argument("--no-sandbox")
@@ -272,12 +272,12 @@ class Spgirl_Auto:
                         print(many)
                         try:
                             driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                            WebDriverWait(driver, 60).until(
+                            WebDriverWait(driver, 120).until(
                                 EC.visibility_of_element_located((By.CLASS_NAME, "user_ranking_box")))
                         except:
                             # うまく読み込めなかった場合にもう一度実行
                             driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                            WebDriverWait(driver, 60).until(
+                            WebDriverWait(driver, 120).until(
                                 EC.visibility_of_element_located((By.CLASS_NAME, "user_ranking_box")))
                         time.sleep(5)
                         btns = driver.find_elements(By.CLASS_NAME, value='kitene_mada')
