@@ -281,6 +281,7 @@ class Spgirl_Auto:
                                 EC.visibility_of_element_located((By.CLASS_NAME, "kitene_mada")))
                         time.sleep(10)
                         btns = driver.find_elements(By.CLASS_NAME, value='kitene_mada')
+                        print(range(btns))
 
                         for i in range(int(many)):
                             my_time()
