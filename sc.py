@@ -40,7 +40,7 @@ def my_driver():
     options.add_argument('--incognito')
 
     # 画像非表示
-    # options.add_argument('--blink-settings=imagesEnabled=false')
+    options.add_argument('--blink-settings=imagesEnabled=false')
 
     # セキュリティ対策などのchromeに搭載してある保護機能をオフにする。
     options.add_argument("--no-sandbox")
