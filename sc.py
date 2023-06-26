@@ -286,6 +286,7 @@ class Spgirl_Auto:
                             my_time()
                             # btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
                             driver.execute_script('arguments[0].scrollIntoView(true);', btns[i])
+                            my_time()
                             btns[i].click()
                             my_time()
                             Alert(driver).accept()
