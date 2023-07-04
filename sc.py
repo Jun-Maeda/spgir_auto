@@ -42,6 +42,21 @@ def my_driver():
     # 画像非表示
     options.add_argument('--blink-settings=imagesEnabled=false')
 
+    # window.navigator_webdriverの設定をfalseに偽装する
+    options.add_argument('--disable-blink-features=AutomationControlled')
+
+    # ユーザーエージェントを偽装する
+    user_agent = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
+        ]
+
+    options.add_argument('--user-agent=' + user_agent[random.randrange(0, len(user_agent), 1)])
+
+    driver = webdriver.Chrome(chrome_options=options, executable_path='./driver/chromedriver')
+
     # セキュリティ対策などのchromeに搭載してある保護機能をオフにする。
     options.add_argument("--no-sandbox")
     # ディスクのメモリスペースを使う。
