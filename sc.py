@@ -55,7 +55,8 @@ def my_driver():
 
     options.add_argument('--user-agent=' + user_agent[random.randrange(0, len(user_agent), 1)])
 
-    driver = webdriver.Chrome(chrome_options=options, executable_path='./driver/chromedriver')
+    # driver = webdriver.Chrome(chrome_options=options, executable_path='./driver/chromedriver')
+    driver = webdriver.Chrome(chrome_options=options)
 
     # セキュリティ対策などのchromeに搭載してある保護機能をオフにする。
     options.add_argument("--no-sandbox")
