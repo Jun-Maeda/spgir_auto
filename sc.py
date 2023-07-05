@@ -758,6 +758,7 @@ if __name__ == '__main__':
         my_time()
         clear_driver()
         for user in users:
+            print("テスト")
             clear_driver()
 
             test = Spgirl_Auto(user[0], user[1])
