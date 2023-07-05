@@ -842,11 +842,11 @@ if __name__ == '__main__':
         except:
             print("フォロー返しなしです。")
         # サーバーをシャットダウン
-        try:
-            cmd = 'sudo shutdown -h now'
-            subprocess.run(cmd, shell=True)
-        except:
-            print("シャットダウン失敗しました")
+        # try:
+        #     cmd = 'sudo shutdown -h now'
+        #     subprocess.run(cmd, shell=True)
+        # except:
+        #     print("シャットダウン失敗しました")
 
 
     elif answer == "2":
