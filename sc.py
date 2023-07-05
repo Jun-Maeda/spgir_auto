@@ -737,6 +737,7 @@ if __name__ == '__main__':
                 if not os.path.isfile(text_file):
                     print("URLファイルがありません")
                 else:
+                    print("直前")
                     test = Spgirl_Auto(user[0], user[1])
                     clear_driver()
 
@@ -758,7 +759,6 @@ if __name__ == '__main__':
         my_time()
         clear_driver()
         for user in users:
-            print("テスト")
             clear_driver()
 
             test = Spgirl_Auto(user[0], user[1])
