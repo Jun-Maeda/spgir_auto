@@ -31,7 +31,7 @@ def my_driver():
     options = webdriver.ChromeOptions()
 
     # driverの自動更新
-    serv = Service(ChromeDriverManager().install())
+    # serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
     options.headless = True
