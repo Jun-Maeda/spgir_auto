@@ -746,6 +746,10 @@ if __name__ == '__main__':
                     subprocess.run("echo pure2juntan | sudo -S chmod -R 777 urls", shell=True)
                     try:
                         test.url_read_kitene()
+                        good_send = f"{user[0]}完了"
+                        print(good_send)
+                        slack = slackweb.Slack(url=os.environ['SLACK'])
+                        slack.notify(text=good_send)
                     except Exception as e:
                         print(e)
                     my_time()
