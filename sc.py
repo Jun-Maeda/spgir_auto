@@ -37,7 +37,7 @@ def my_driver():
     options.headless = True
     # options.add_argument('--disable-gpu')
     # シークレットモード
-    # options.add_argument('--incognito')
+    options.add_argument('--incognito')
 
     # 画像非表示
     options.add_argument('--blink-settings=imagesEnabled=false')
