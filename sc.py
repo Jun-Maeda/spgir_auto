@@ -37,7 +37,7 @@ def my_driver():
     options.headless = True
     # options.add_argument('--disable-gpu')
     # シークレットモード
-    options.add_argument('--incognito')
+    # options.add_argument('--incognito')
 
     # 画像非表示
     options.add_argument('--blink-settings=imagesEnabled=false')
@@ -144,7 +144,7 @@ def today_drop_box():
             today_path = f'/heaven_auto/{inp}reset/'
             for entry in drop.files_list_folder(f'{today_path}urls').entries:
                 drop2.files_download_to_file(f'urls/{entry.name}', f'{today_path}urls/{entry.name}')
-
+            drop2.files_download_to_file('account.txt', f'{today_path}account.txt')
             drop2.files_download_to_file('account2.txt', f'{today_path}account2.txt')
             print("キテねリストを消去します")
             try:
