@@ -37,7 +37,7 @@ def my_driver():
     options.headless = True
     # options.add_argument('--disable-gpu')
     # シークレットモード
-    # options.add_argument('--incognito')
+    options.add_argument('--incognito')
 
     # 画像非表示
     options.add_argument('--blink-settings=imagesEnabled=false')
@@ -847,11 +847,11 @@ if __name__ == '__main__':
         except:
             print("フォロー返しなしです。")
         # サーバーをシャットダウン
-        # try:
-        #     cmd = 'sudo shutdown -h now'
-        #     subprocess.run(cmd, shell=True)
-        # except:
-        #     print("シャットダウン失敗しました")
+        try:
+            cmd = 'sudo shutdown -h now'
+            subprocess.run(cmd, shell=True)
+        except:
+            print("シャットダウン失敗しました")
 
 
     elif answer == "2":
