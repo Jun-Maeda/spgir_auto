@@ -243,7 +243,7 @@ class Spgirl_Auto:
                     log = "使い切りました"
                 except:
                     try:
-                        WebDriverWait(driver, 60).until(
+                        WebDriverWait(driver, 40).until(
                             EC.visibility_of_element_located((By.CLASS_NAME, "kitene_count")))
                         c_text = driver.find_element(By.CLASS_NAME, value='kitene_count').text
                         many = re.findall(r'キテネ残り回数：(\w+)回', c_text)[0]
@@ -805,8 +805,11 @@ if __name__ == '__main__':
                     f.write("%s\n" % e)
             slack_send += f"\n{user[0]}\n{sl}\n"
         # Slackに通知
-        slack = slackweb.Slack(url=os.environ['SLACK'])
-        slack.notify(text=slack_send)
+        try:
+            slack = slackweb.Slack(url=os.environ['SLACK'])
+            slack.notify(text=slack_send)
+        except:
+            slack.notify(text="ログの取得に失敗しました")
         # 時間を出力
         time_count(time_sta)
 
