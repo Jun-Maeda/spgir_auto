@@ -34,7 +34,7 @@ def my_driver():
     # serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
-    options.headless = True
+    # options.headless = True
     # options.add_argument('--disable-gpu')
     # シークレットモード
     options.add_argument('--incognito')
@@ -288,12 +288,12 @@ class Spgirl_Auto:
                         print(many)
                         try:
                             driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                            WebDriverWait(driver, 120).until(
+                            WebDriverWait(driver, 60).until(
                                 EC.visibility_of_element_located((By.CLASS_NAME, "user_ranking_box")))
                         except:
                             # うまく読み込めなかった場合にもう一度実行
                             driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                            WebDriverWait(driver, 120).until(
+                            WebDriverWait(driver, 60).until(
                                 EC.visibility_of_element_located((By.CLASS_NAME, "user_ranking_box")))
                         time.sleep(5)
                         btns = driver.find_elements(By.CLASS_NAME, value='kitene_mada')
@@ -724,6 +724,7 @@ if __name__ == '__main__':
     if answer == "1":
         clear_driver()
         drop = today_drop_box()
+        # drop = True
         if drop:
             slack_send = "自動実行開始"
             print(slack_send)
@@ -771,9 +772,17 @@ if __name__ == '__main__':
             with open(logs, mode="a") as f:
                 f.write("%s\n" % datetime.datetime.now())
             try:
+                slack_send = f"{user[0]}の残り処理開始"
+                print(slack_send)
+                slack = slackweb.Slack(url=os.environ['SLACK'])
+                slack.notify(text=slack_send)
                 test.kitene_limit()
                 clear_driver()
             except Exception as e:
+                slack_send = f"キテねに失敗しました"
+                print(slack_send)
+                slack = slackweb.Slack(url=os.environ['SLACK'])
+                slack.notify(text=slack_send)
                 print("キテねに失敗しました")
                 clear_driver()
                 print(e)
