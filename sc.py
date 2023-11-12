@@ -772,10 +772,10 @@ if __name__ == '__main__':
             with open(logs, mode="a") as f:
                 f.write("%s\n" % datetime.datetime.now())
             try:
-                slack_send = f"{user[0]}の残り処理開始"
-                print(slack_send)
-                slack = slackweb.Slack(url=os.environ['SLACK'])
-                slack.notify(text=slack_send)
+                # slack_send = f"{user[0]}の残り処理開始"
+                # print(slack_send)
+                # slack = slackweb.Slack(url=os.environ['SLACK'])
+                # slack.notify(text=slack_send)
                 test.kitene_limit()
                 clear_driver()
             except Exception as e:
@@ -788,41 +788,13 @@ if __name__ == '__main__':
                 print(e)
                 with open(logs, mode="a") as f:
                     f.write("%s\n" % e)
+            slack_send = f"残り処理終了"
+            print(slack_send)
+            slack = slackweb.Slack(url=os.environ['SLACK'])
             my_time()
         clear_driver()
         my_time()
-        # 確認
-        slack_send = ""
-        for user in users:
-            # 念の為chromeを停止
-            # cmd = 'killall chrome'
-            # subprocess.run(cmd, shell=True)
-            clear_driver()
 
-            test = Spgirl_Auto(user[0], user[1])
-            clear_driver()
-            try:
-                sl = test.kitene_confirm()
-                clear_driver()
-            except Exception as e:
-                sl = "キテねの確認に失敗しました"
-                clear_driver()
-                print(sl)
-                print(e)
-                logs = f"log.txt"
-                with open(logs, mode="a") as f:
-                    f.write("%s\n" % e)
-            slack_send += f"\n{user[0]}\n{sl}\n"
-        # Slackに通知
-        try:
-            slack = slackweb.Slack(url=os.environ['SLACK'])
-            slack.notify(text=slack_send)
-        except:
-            slack.notify(text="ログの取得に失敗しました")
-        # 時間を出力
-        time_count(time_sta)
-
-        clear_driver()
 
         # フォロー返し
         slack_send = ""
@@ -858,6 +830,40 @@ if __name__ == '__main__':
             print(slack_send)
         except:
             print("フォロー返しなしです。")
+
+        clear_driver()
+        # 確認
+        slack_send = ""
+        for user in users:
+            # 念の為chromeを停止
+            # cmd = 'killall chrome'
+            # subprocess.run(cmd, shell=True)
+            clear_driver()
+
+            test = Spgirl_Auto(user[0], user[1])
+            clear_driver()
+            try:
+                sl = test.kitene_confirm()
+                clear_driver()
+            except Exception as e:
+                sl = "キテねの確認に失敗しました"
+                clear_driver()
+                print(sl)
+                print(e)
+                logs = f"log.txt"
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % e)
+            slack_send += f"\n{user[0]}\n{sl}\n"
+        # Slackに通知
+        try:
+            slack = slackweb.Slack(url=os.environ['SLACK'])
+            slack.notify(text=slack_send)
+        except:
+            slack.notify(text="ログの取得に失敗しました")
+        # 時間を出力
+        time_count(time_sta)
+
+        clear_driver()
         # サーバーをシャットダウン
         try:
             cmd = 'sudo shutdown -h now'
