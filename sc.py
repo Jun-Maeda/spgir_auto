@@ -21,8 +21,9 @@ import random
 
 load_dotenv()
 
+
 def my_time():
-    rand = random.randrange(3, 7, 1)
+    rand = random.randrange(1, 2, 3)
     return time.sleep(rand)
 
 
@@ -51,7 +52,7 @@ def my_driver():
         'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'
-        ]
+    ]
 
     options.add_argument('--user-agent=' + user_agent[random.randrange(0, len(user_agent), 1)])
 
@@ -104,6 +105,7 @@ def my_drop_box():
     except:
         print("ダウンロードしました(メッセージテンプレなし)")
 
+
 def today_drop_box():
     today = datetime.date.today().strftime('%Y%m%d')
     inp = today
@@ -153,7 +155,6 @@ def today_drop_box():
                 print("消去しました。")
             except:
                 print("失敗しました")
-
 
         try:
             for entry in drop.files_list_folder(f'{today_path}messages/').entries:
@@ -391,7 +392,6 @@ class Spgirl_Auto:
 
         # スクリーンショットを取得
         # driver.save_screenshot('result.png')
-
 
         WebDriverWait(driver, 30).until(
             EC.visibility_of_element_located((By.ID, "login_header")))
@@ -700,6 +700,7 @@ class Spgirl_Auto:
 
 if __name__ == '__main__':
     start_desc = f"{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))}の実行"
+    slack = slackweb.Slack(url=os.environ['SLACK'])
     print(start_desc)
     with open("log.txt", mode="a") as f:
         f.write("%s\n" % start_desc)
@@ -709,6 +710,7 @@ if __name__ == '__main__':
 
     answer = input(
         "[1]自動キテね実行 [2]残りのキテね確認 [3]マッチユーザーのみ [4]本日のファイルダウンロード [5]キテねリスト削除 [6]履歴削除 [7]サーバシャットダウン [8]フォロー返し")
+    # aで本日のファイル、cで自動キテね、fでフォロー返し
 
     # ユーザー情報の取り込み
     users = []
@@ -728,7 +730,7 @@ if __name__ == '__main__':
         if drop:
             slack_send = "自動実行開始"
             print(slack_send)
-            slack = slackweb.Slack(url=os.environ['SLACK'])
+
             slack.notify(text=slack_send)
             for user in users:
                 clear_driver()
@@ -749,7 +751,6 @@ if __name__ == '__main__':
                         test.url_read_kitene()
                         good_send = f"{user[0]}完了"
                         print(good_send)
-                        slack = slackweb.Slack(url=os.environ['SLACK'])
                         slack.notify(text=good_send)
                     except Exception as e:
                         print(e)
@@ -758,7 +759,6 @@ if __name__ == '__main__':
             # Slackに通知
             slack_send = "本日のファイル取得できませんでした"
             print(slack_send)
-            slack = slackweb.Slack(url=os.environ['SLACK'])
             slack.notify(text=slack_send)
 
         my_time()
@@ -774,14 +774,12 @@ if __name__ == '__main__':
             try:
                 # slack_send = f"{user[0]}の残り処理開始"
                 # print(slack_send)
-                # slack = slackweb.Slack(url=os.environ['SLACK'])
                 # slack.notify(text=slack_send)
                 test.kitene_limit()
                 clear_driver()
             except Exception as e:
                 slack_send = f"キテねに失敗しました"
                 print(slack_send)
-                slack = slackweb.Slack(url=os.environ['SLACK'])
                 slack.notify(text=slack_send)
                 print("キテねに失敗しました")
                 clear_driver()
@@ -790,11 +788,9 @@ if __name__ == '__main__':
                     f.write("%s\n" % e)
             slack_send = f"残り処理終了"
             print(slack_send)
-            slack = slackweb.Slack(url=os.environ['SLACK'])
             my_time()
         clear_driver()
         my_time()
-
 
         # フォロー返し
         slack_send = ""
@@ -825,7 +821,6 @@ if __name__ == '__main__':
                 my_time()
                 slack_send += f"\n{check[0]}\n{sl}\n"
             # Slackに通知
-            slack = slackweb.Slack(url=os.environ['SLACK'])
             slack.notify(text=slack_send)
             print(slack_send)
         except:
@@ -856,7 +851,6 @@ if __name__ == '__main__':
             slack_send += f"\n{user[0]}\n{sl}\n"
         # Slackに通知
         try:
-            slack = slackweb.Slack(url=os.environ['SLACK'])
             slack.notify(text=slack_send)
         except:
             slack.notify(text="ログの取得に失敗しました")
@@ -895,7 +889,7 @@ if __name__ == '__main__':
                     f.write("%s\n" % e)
             slack_send += f"\n{user[0]}\n{sl}\n"
         # Slackに通知
-        slack = slackweb.Slack(url=os.environ['SLACK'])
+
         slack.notify(text=slack_send)
 
 
@@ -944,7 +938,6 @@ if __name__ == '__main__':
                     f.write("%s\n" % e)
             slack_send += f"\n{user[0]}\n{sl}\n"
         # Slackに通知
-        slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
         clear_driver()
 
@@ -1022,7 +1015,6 @@ if __name__ == '__main__':
                 my_time()
                 slack_send += f"\n{check[0]}\n{sl}\n"
             # Slackに通知
-            slack = slackweb.Slack(url=os.environ['SLACK'])
             slack.notify(text=slack_send)
             print(slack_send)
         except:
@@ -1035,11 +1027,174 @@ if __name__ == '__main__':
             print("シャットダウン失敗しました")
     elif answer == "9":
         slack_send = "テスト"
-        slack = slackweb.Slack(url=os.environ['SLACK'])
         slack.notify(text=slack_send)
 
     elif answer == "a":
         today_drop_box()
+
+    if answer == "c":
+        clear_driver()
+        drop = today_drop_box()
+        # drop = True
+        if drop:
+            slack_send = "自動実行開始"
+            print(slack_send)
+
+            slack.notify(text=slack_send)
+            for user in users:
+                clear_driver()
+                text_file = f"urls/{user[0]}.txt"
+
+                # ファイルがなかったら終了
+                if not os.path.isfile(text_file):
+                    print("URLファイルがありません")
+                else:
+                    print("直前")
+                    test = Spgirl_Auto(user[0], user[1])
+                    clear_driver()
+
+                    with open("log.txt", mode="a") as f:
+                        f.write("%s\n" % user[0])
+                    subprocess.run("echo pure2juntan | sudo -S chmod -R 777 urls", shell=True)
+                    try:
+                        test.url_read_kitene()
+                        good_send = f"{user[0]}完了"
+                        print(good_send)
+                        slack.notify(text=good_send)
+                    except Exception as e:
+                        print(e)
+                    my_time()
+        else:
+            # Slackに通知
+            slack_send = "本日のファイル取得できませんでした"
+            print(slack_send)
+            slack.notify(text=slack_send)
+
+        my_time()
+        clear_driver()
+        for user in users:
+            clear_driver()
+
+            test = Spgirl_Auto(user[0], user[1])
+            clear_driver()
+            logs = f"log.txt"
+            with open(logs, mode="a") as f:
+                f.write("%s\n" % datetime.datetime.now())
+                slack.notify(text=f"{user[0]}の残りキテね開始")
+            try:
+                test.kitene_limit()
+                clear_driver()
+            except Exception as e:
+                slack_send = f"失敗しました"
+                print(slack_send)
+                slack.notify(text=slack_send)
+                print("キテねに失敗しました")
+                clear_driver()
+                print(e)
+                with open(logs, mode="a") as f:
+                    f.write("%s\n" % e)
+            slack_send = f"残りキテね終了"
+            print(slack_send)
+            slack.notify(text=slack_send)
+            my_time()
+        clear_driver()
+        my_time()
+
+        clear_driver()
+        # 確認
+        slack_send = ""
+        for user in users:
+            clear_driver()
+
+            test = Spgirl_Auto(user[0], user[1])
+            clear_driver()
+            try:
+                sl = test.kitene_confirm()
+                clear_driver()
+            except Exception as e:
+                sl = "キテねの確認に失敗しました"
+                clear_driver()
+                print(sl)
+                print(e)
+            slack_send += f"\n{user[0]}\n{sl}\n"
+        # Slackに通知
+        try:
+            slack.notify(text=slack_send)
+        except:
+            slack.notify(text="ログの取得に失敗しました")
+        # 時間を出力
+        time_count(time_sta)
+
+        clear_driver()
+        # サーバーをシャットダウン
+        try:
+            cmd = 'sudo shutdown -h now'
+            subprocess.run(cmd, shell=True)
+        except:
+            print("シャットダウン失敗しました")
+
+    elif answer == "f":
+        clear_driver()
+        drop = today_drop_box()
+        # drop = True
+        if drop:
+            slack_send = "ファイル取得"
+
+        else:
+            # Slackに通知
+            slack_send = "本日のファイル取得できませんでした"
+            print(slack_send)
+            slack.notify(text=slack_send)
+
+        my_time()
+        clear_driver()
+
+        # フォロー返し
+        slack_send = ""
+        # ユーザー情報の取り込み
+        users = []
+        try:
+            with open("account2.txt", "r", encoding="utf-8") as f:
+                # リストとして読み込む
+                lines = f.readlines()
+
+            for line in lines:
+                li = line.strip('\n')
+                l = li.split(" ")
+                users.append(l)
+
+            for check in users:
+                clear_driver()
+                print(check[0])
+                slack.notify(text=f"{check[0]}のキテね確認")
+                test = Spgirl_Auto(check[0], check[1])
+                clear_driver()
+                try:
+                    sl = test.mygirl_follower()
+                except Exception as e:
+                    sl = f"失敗しました"
+                    clear_driver()
+                    print(sl)
+                    print(e)
+                my_time()
+                slack_send += f"\n{check[0]}\n{sl}\n"
+            # Slackに通知
+            slack.notify(text=slack_send)
+            print(slack_send)
+        except:
+            print("フォロー返しなしです。")
+
+        clear_driver()
+        # 時間を出力
+        time_count(time_sta)
+
+        clear_driver()
+        # サーバーをシャットダウン
+        try:
+            cmd = 'sudo shutdown -h now'
+            subprocess.run(cmd, shell=True)
+        except:
+            print("シャットダウン失敗しました")
 
     # 時間を測る
     time_end = time.perf_counter()
