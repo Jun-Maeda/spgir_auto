@@ -701,6 +701,7 @@ class Spgirl_Auto:
 if __name__ == '__main__':
     start_desc = f"{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))}の実行"
     slack = slackweb.Slack(url=os.environ['SLACK'])
+    slack2 = slackweb.Slack(url=os.environ['SLACK2'])
     print(start_desc)
     with open("log.txt", mode="a") as f:
         f.write("%s\n" % start_desc)
@@ -1136,6 +1137,9 @@ if __name__ == '__main__':
     elif answer == "f":
         clear_driver()
         drop = today_drop_box()
+        print('開始しました。')
+        slack2.notify(text='開始しました')
+
         # drop = True
         if drop:
             slack_send = "ファイル取得"
@@ -1143,8 +1147,9 @@ if __name__ == '__main__':
         else:
             # Slackに通知
             slack_send = "本日のファイル取得できませんでした"
-            print(slack_send)
-            slack.notify(text=slack_send)
+
+            slack2.notify(text=slack_send)
+        print(slack_send)
 
         my_time()
         clear_driver()
@@ -1166,21 +1171,24 @@ if __name__ == '__main__':
             for check in users:
                 clear_driver()
                 print(check[0])
-                slack.notify(text=f"{check[0]}のキテね確認")
+                slack2.notify(text=f"{check[0]}のキテね確認")
                 test = Spgirl_Auto(check[0], check[1])
                 clear_driver()
+                # メッセージ送信
                 try:
                     sl = test.mygirl_follower()
+                    slack2.notify(text="成功")
                 except Exception as e:
                     sl = f"失敗しました"
+                    slack2.notify(text=f"ログインできませんでした。")
                     clear_driver()
                     print(sl)
-                    print(e)
                 my_time()
                 slack_send += f"\n{check[0]}\n{sl}\n"
             # Slackに通知
-            slack.notify(text=slack_send)
+            # slack2.notify(text=slack_send)
             print(slack_send)
+            slack2.notify(text=f"すべて完了")
         except:
             print("フォロー返しなしです。")
 
