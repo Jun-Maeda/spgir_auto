@@ -104,11 +104,11 @@ venv.bak/
 .mypy_cache/
 
 account.txt
-old/
-urls/
+old/*
+urls/*
 /main_logs/
-/log.txt
+log.txt
 /nohup.out
-/all_log.txt
-/logs/
-/account2.txt
+all_log.txt
+logs/*
+account2.txt
