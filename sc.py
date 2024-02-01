@@ -35,7 +35,7 @@ def my_driver():
     # serv = Service(ChromeDriverManager().install())
 
     # ヘッドレスモード
-    options.headless = True
+    # options.headless = True
     # options.add_argument('--disable-gpu')
     # シークレットモード
     options.add_argument('--incognito')
@@ -287,25 +287,28 @@ class Spgirl_Auto:
                         c_text = driver.find_element(By.CLASS_NAME, value='kitene_count').text
                         many = re.findall(r'キテネ残り回数：(\w+)回', c_text)[0]
                         print(many)
-                        try:
-                            driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                            WebDriverWait(driver, 60).until(
-                                EC.visibility_of_element_located((By.CLASS_NAME, "user_ranking_box")))
-                        except:
-                            # うまく読み込めなかった場合にもう一度実行
-                            driver.get(f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
-                            WebDriverWait(driver, 60).until(
-                                EC.visibility_of_element_located((By.CLASS_NAME, "user_ranking_box")))
-                        time.sleep(5)
-                        btns = driver.find_elements(By.CLASS_NAME, value='kitene_mada')
-                        print(btns)
+
 
                         for i in range(int(many)):
+                            try:
+                                driver.get(
+                                    f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
+                                WebDriverWait(driver, 60).until(
+                                    EC.visibility_of_element_located((By.CLASS_NAME, "user_ranking_box")))
+                            except:
+                                # うまく読み込めなかった場合にもう一度実行
+                                driver.get(
+                                    f"https://spgirl.cityheaven.net/J10ComeonAiMatchingList.php?gid={self.username}")
+                                WebDriverWait(driver, 60).until(
+                                    EC.visibility_of_element_located((By.CLASS_NAME, "user_ranking_box")))
+                            time.sleep(5)
+                            btns = driver.find_elements(By.CLASS_NAME, value='kitene_send_btn__text_img')
+                            print(btns)
                             my_time()
                             # btns = driver.find_elements(By.CLASS_NAME, value='kitene_btn')
                             driver.execute_script('arguments[0].scrollIntoView(true);', btns[i])
                             my_time()
-                            btns[i].click()
+                            btns[0].click()
                             my_time()
                             Alert(driver).accept()
                             my_time()
