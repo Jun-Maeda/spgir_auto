@@ -622,10 +622,10 @@ class Spgirl_Auto:
                 my_follower = f"https://spgirl.cityheaven.net/J9FollowerList.php?gid={self.username}"
                 driver.get(my_follower)
                 WebDriverWait(driver, 8).until(
-                    EC.visibility_of_element_located((By.CLASS_NAME, "f_on"))
+                    EC.visibility_of_element_located((By.CLASS_NAME, "f_off"))
                 )
                 try:
-                    btns = driver.find_elements(By.CLASS_NAME, value='f_on')
+                    btns = driver.find_elements(By.CLASS_NAME, value='f_off')
                     wait = WebDriverWait(driver=driver, timeout=8)
                     wait.until(EC.presence_of_all_elements_located)
                     my_time()
